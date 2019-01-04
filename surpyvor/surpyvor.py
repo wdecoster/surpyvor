@@ -9,9 +9,30 @@ import os
 
 def main():
     args = get_args()
-    if args.merge:
+
+    if args.command == "merge":
         sv_merge(args.files, args.distance, args.callers, args.type, args.strand,
                  args.estimate_distance, args.minlength, args.output)
+    elif args.command == "highsens":
+        sv_merge(samples=args.files,
+                 distance=100,
+                 callers=1,
+                 type_arg=True,
+                 strand_arg=False,
+                 estimate_distance_arg=False,
+                 minlength=50,
+                 output=args.output)
+    elif args.command == "highconf":
+        sv_merge(samples=args.files,
+                 distance=500,
+                 callers=2,
+                 type_arg=True,
+                 strand_arg=False,
+                 estimate_distance_arg=False,
+                 minlength=50,
+                 output=args.output)
+    else:
+        print("Unrecognized command")
 
 
 def sv_merge(samples, distance, callers, type_arg, strand_arg,
@@ -59,15 +80,17 @@ def get_args():
                         action="version",
                         version='surpyvor: {}, SURVIVOR {}'.format(__version__, survivor_version),
                         help="Print version and quit.")
-    parser.add_argument("-o", "--output",
-                        help="output file",
-                        required=True)
-    subparsers = parser.add_subparsers(help='Available subcommands')
+    subparsers = parser.add_subparsers(help='Available subcommands',
+                                       dest='command',
+                                       title='[sub-commands]')
     merge = subparsers.add_parser("merge")
     merge.add_argument("-f", "--files",
                        nargs='+',
                        required=True,
                        help="vcf files to merge")
+    merge.add_argument("-o", "--output",
+                       help="output file",
+                       required=True)
     merge.add_argument("-d", "--distance",
                        type=int,
                        default=500,
@@ -92,6 +115,22 @@ def get_args():
                        action="store_true",
                        default=False,
                        help="Estimate distance between calls")
+    highsens = subparsers.add_parser("highsens")
+    highsens.add_argument("-f", "--files",
+                          nargs='+',
+                          required=True,
+                          help="vcf files to merge")
+    highsens.add_argument("-o", "--output",
+                          help="output file",
+                          required=True)
+    highsens = subparsers.add_parser("highconf")
+    highsens.add_argument("-f", "--files",
+                          nargs='+',
+                          required=True,
+                          help="vcf files to merge")
+    highsens.add_argument("-o", "--output",
+                          help="output file",
+                          required=True)
     return parser.parse_args()
 
 

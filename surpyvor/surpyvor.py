@@ -11,10 +11,14 @@ def main():
     args = get_args()
 
     if args.command == "merge":
-        sv_merge(args.files, args.distance, args.callers, args.type, args.strand,
-                 args.estimate_distance, args.minlength, args.output)
-    elif args.command == "highsens":
         sv_merge(samples=args.files,
+                 distance=args.distance,
+                 callers=args.callers,
+                 type_arg=args.type,
+                 strand_arg=args.strand,
+                 estimate_distance_arg=args.estimate_distance,
+                 minlength=args.minlength,
+                 output=args.output)
                  distance=100,
                  callers=1,
                  type_arg=True,

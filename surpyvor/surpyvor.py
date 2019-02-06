@@ -127,12 +127,12 @@ def get_args():
     highsens.add_argument("-o", "--output",
                           help="output file",
                           required=True)
-    highsens = subparsers.add_parser("highconf")
-    highsens.add_argument("-f", "--files",
+    highconf = subparsers.add_parser("highconf")
+    highconf.add_argument("-f", "--files",
                           nargs='+',
                           required=True,
                           help="vcf files to merge")
-    highsens.add_argument("-o", "--output",
+    highconf.add_argument("-o", "--output",
                           help="output file",
                           required=True)
     return parser.parse_args()

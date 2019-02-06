@@ -36,7 +36,7 @@ def main():
                  minlength=50,
                  output=args.output)
     else:
-        print("Unrecognized command")
+        print("Unrecognized subcommand. Available are 'merge', 'highsens', 'highconf'.")
 
 
 def sv_merge(samples, distance, callers, type_arg, strand_arg,

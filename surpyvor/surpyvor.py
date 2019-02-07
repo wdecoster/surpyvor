@@ -29,7 +29,7 @@ def main():
     elif args.command == "highconf":
         sv_merge(samples=args.files,
                  distance=500,
-                 callers=2,
+                 callers=len(args.files),
                  type_arg=True,
                  strand_arg=False,
                  estimate_distance_arg=False,

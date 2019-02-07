@@ -62,15 +62,15 @@ def sv_merge(samples, distance, callers, type_arg, strand_arg,
         strand = 1
     if estimate_distance_arg:
         estimate_distance = 1
-    survivor_cmd = "SURVIVOR merge {} {} {} {} {} {} {} {}".format(
-        fofn_f,
-        distance,
-        callers,
-        type,
-        strand,
-        estimate_distance,
-        minlength,
-        output)
+    survivor_cmd = "SURVIVOR merge {fof} {dist} {call} {typ} {str} {estm} {ml} {out}".format(
+        fof=fofn_f,
+        dist=distance,
+        call=callers,
+        typ=type,
+        str=strand,
+        estm=estimate_distance,
+        ml=minlength,
+        out=output)
     sys.stderr.write("Executing SURVIVOR...\n")
     subprocess.call(shlex.split(survivor_cmd), stdout=subprocess.DEVNULL)
     os.close(fhf)

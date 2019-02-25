@@ -88,12 +88,12 @@ def vcf_concat(vcffiles):
 
 
 def get_args():
-    survivor_version = get_survivor_version()
     parser = ArgumentParser(description="A wrapper around SURVIVOR, with convenience functions",
                             formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument("-v", "--version",
                         action="version",
-                        version='surpyvor: {}, SURVIVOR {}'.format(__version__, survivor_version),
+                        version='surpyvor: {}, SURVIVOR {}'.format(
+                            __version__, get_survivor_version()),
                         help="Print version and quit.")
     subparsers = parser.add_subparsers(help='Available subcommands',
                                        dest='command',

@@ -1,5 +1,4 @@
-from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
-from .version import __version__
+from surpyvor import plots, utils, parse_arguments
 import subprocess
 import tempfile
 import sys
@@ -8,7 +7,7 @@ import os
 
 
 def main():
-    args = get_args()
+    args = parse_arguments.get_args()
 
     if args.command == "merge":
         sv_merge(samples=args.files,
@@ -20,7 +19,7 @@ def main():
                  minlength=args.minlength,
                  output=args.output)
     elif args.command == "highsens":
-        sv_merge(samples=vcf_concat(samples=args.files),
+        sv_merge(samples=utils.vcf_concat(samples=args.files),
                  distance=100,
                  callers=1,
                  type_arg=True,
@@ -37,6 +36,31 @@ def main():
                  estimate_distance_arg=False,
                  minlength=50,
                  output=args.output)
+    elif args.command == 'prf':
+        fhv, vcf_out = tempfile.mkstemp()
+        if args.ignore_type:
+            ignore_type = "-1"
+        else:
+            ignore_type = "1"
+        combined_vcf = sv_merge(samples=[utils.normalize_vcf(s) for s in [args.truth, args.test]],
+                                distance=args.distance,
+                                callers=1,
+                                type_arg=ignore_type,
+                                strand_arg=-1,
+                                estimate_distance_arg=-1,
+                                minlength=args.minlength,
+                                output=vcf_out)
+        truth_set, test_set = utils.get_variant_identifiers(combined_vcf)
+        plots.venn((truth_set, test_set))
+        tp = len(truth_set & test_set)
+        precision = tp / len(test_set)
+        recall = tp / len(truth_set)
+        fmeasure = 2*(precision*recall)/(precision + recall)
+        print(f"Precision: {round(precision, ndigits=4)}%")
+        print(f"Recall: {round(recall, ndigits=4)}%")
+        print(f"F-measure: {round(fmeasure, ndigits=4)}")
+        if args.bar:
+            plots.bar_chart(combined_vcf)
     else:
         print("Unrecognized subcommand. Available are 'merge', 'highsens', 'highconf'.")
 
@@ -76,87 +100,6 @@ def sv_merge(samples, distance, callers, type_arg, strand_arg,
     sys.stderr.write("Executing SURVIVOR...\n")
     subprocess.call(shlex.split(survivor_cmd), stdout=subprocess.DEVNULL)
     os.close(fhf)
-
-
-def vcf_concat(vcffiles):
-    fhf, concatenated = tempfile.mkstemp()
-    bcftools_concat_cmd = "bcftools concat {inp} | bcftools sort -o {out}".format(
-        out=concatenated,
-        inp=' '.join(vcffiles))
-    subprocess.call(shlex.split(bcftools_concat_cmd))
-    return concatenated
-
-
-def get_args():
-    parser = ArgumentParser(description="A wrapper around SURVIVOR, with convenience functions",
-                            formatter_class=ArgumentDefaultsHelpFormatter)
-    parser.add_argument("-v", "--version",
-                        action="version",
-                        version='surpyvor: {}, SURVIVOR {}'.format(
-                            __version__, get_survivor_version()),
-                        help="Print version and quit.")
-    subparsers = parser.add_subparsers(help='Available subcommands',
-                                       dest='command',
-                                       title='[sub-commands]')
-    merge = subparsers.add_parser("merge")
-    merge.add_argument("-f", "--files",
-                       nargs='+',
-                       required=True,
-                       help="vcf files to merge")
-    merge.add_argument("-o", "--output",
-                       help="output file",
-                       required=True)
-    merge.add_argument("-d", "--distance",
-                       type=int,
-                       default=500,
-                       help="distance between variants to merge")
-    merge.add_argument("-l", "--minlength",
-                       type=int,
-                       default=50,
-                       help="Minimum length of variants to consider")
-    merge.add_argument("-c", "--callers",
-                       type=int,
-                       default=1,
-                       help="Minimum number of callers to support a variant")
-    merge.add_argument("-t", "--type",
-                       action="store_true",
-                       default=False,
-                       help="Take type into account")
-    merge.add_argument("-s", "--strand",
-                       action="store_true",
-                       default=False,
-                       help="Take strand into account")
-    merge.add_argument("-e", "--estimate_distance",
-                       action="store_true",
-                       default=False,
-                       help="Estimate distance between calls")
-    highsens = subparsers.add_parser("highsens")
-    highsens.add_argument("-f", "--files",
-                          nargs='+',
-                          required=True,
-                          help="vcf files to merge")
-    highsens.add_argument("-o", "--output",
-                          help="output file",
-                          required=True)
-    highconf = subparsers.add_parser("highconf")
-    highconf.add_argument("-f", "--files",
-                          nargs='+',
-                          required=True,
-                          help="vcf files to merge")
-    highconf.add_argument("-o", "--output",
-                          help="output file",
-                          required=True)
-    return parser.parse_args()
-
-
-def get_survivor_version():
-    for line in subprocess.check_output(args="SURVIVOR",
-                                        stderr=subprocess.STDOUT,
-                                        universal_newlines=True).split('\n'):
-        if line.startswith("Version:"):
-            return line.strip().split(' ')[1]
-    else:
-        return "version not found"
 
 
 if __name__ == '__main__':

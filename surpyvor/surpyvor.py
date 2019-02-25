@@ -61,8 +61,6 @@ def main():
         print(f"F-measure: {round(fmeasure, ndigits=4)}")
         if args.bar:
             plots.bar_chart(combined_vcf)
-    else:
-        print("Unrecognized subcommand. Available are 'merge', 'highsens', 'highconf'.")
 
 
 def sv_merge(samples, distance, callers, type_arg, strand_arg,

@@ -1,6 +1,7 @@
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from .version import __version__
 import subprocess
+import sys
 
 
 def get_args():
@@ -11,10 +12,9 @@ def get_args():
                         version='surpyvor: {}, SURVIVOR {}'.format(
                             __version__, get_survivor_version()),
                         help="Print version and quit.")
-    subparsers = parser.add_subparsers(help='Available subcommands',
-                                       dest='command',
+    subparsers = parser.add_subparsers(dest='command',
                                        title='[sub-commands]')
-    merge = subparsers.add_parser("merge")
+    merge = subparsers.add_parser("merge", help="merging vcf files of SVs")
     merge.add_argument("-f", "--files",
                        nargs='+',
                        required=True,
@@ -46,7 +46,7 @@ def get_args():
                        action="store_true",
                        default=False,
                        help="Estimate distance between calls")
-    highsens = subparsers.add_parser("highsens")
+    highsens = subparsers.add_parser("highsens", help="get union of SV vcfs")
     highsens.add_argument("-f", "--files",
                           nargs='+',
                           required=True,
@@ -54,7 +54,7 @@ def get_args():
     highsens.add_argument("-o", "--output",
                           help="output file",
                           required=True)
-    highconf = subparsers.add_parser("highconf")
+    highconf = subparsers.add_parser("highconf", help="get intersection of SV vcfs")
     highconf.add_argument("-f", "--files",
                           nargs='+',
                           required=True,
@@ -62,9 +62,13 @@ def get_args():
     highconf.add_argument("-o", "--output",
                           help="output file",
                           required=True)
-    prf = subparsers.add_parser('prf')
-    prf.add_argument("--truth", help="vcf containing truth set", required=True)
-    prf.add_argument("--test", help="vcf containing test set", required=True)
+    prf = subparsers.add_parser('prf', help="calculate precision, recall and F-measure")
+    prf.add_argument("--truth",
+                     help="vcf containing truth set",
+                     required=True)
+    prf.add_argument("--test",
+                     help="vcf containing test set",
+                     required=True)
     prf.add_argument("-d", "--distance",
                      help="maximum distance between test and truth call",
                      default=500)
@@ -77,7 +81,12 @@ def get_args():
     prf.add_argument("--bar",
                      help="Make stacked bar chart of SV lengths coloured by validation status",
                      action="store_true")
-    return parser.parse_args()
+    args = parser.parse_args()
+    if not args.command:
+        sys.stderr.write("INPUT ERROR: sub-command required\n\n")
+        parser.print_help()
+        sys.exit()
+    return args
 
 
 def get_survivor_version():

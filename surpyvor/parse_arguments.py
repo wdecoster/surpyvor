@@ -1,5 +1,6 @@
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from .version import __version__
+import subprocess
 
 
 def get_args():

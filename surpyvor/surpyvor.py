@@ -78,7 +78,7 @@ def sv_merge(samples, distance, callers, type_arg, strand_arg,
 
 def get_args():
     survivor_version = get_survivor_version()
-    parser = ArgumentParser(description="A wrapper around SURVIVOR",
+    parser = ArgumentParser(description="A wrapper around SURVIVOR, with convenience functions",
                             formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument("-v", "--version",
                         action="version",

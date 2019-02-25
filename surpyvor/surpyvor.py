@@ -50,7 +50,8 @@ def main():
                                 estimate_distance_arg=-1,
                                 minlength=args.minlength,
                                 output=vcf_out)
-        truth_set, test_set = utils.get_variant_identifiers(combined_vcf)
+        truth_set, test_set = utils.get_variant_identifiers(vcf=combined_vcf,
+                                                            ignore_chroms=args.ignore_chroms)
         plots.venn((truth_set, test_set))
         tp = len(truth_set & test_set)
         precision = tp / len(test_set)

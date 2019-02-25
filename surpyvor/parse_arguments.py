@@ -81,6 +81,11 @@ def get_args():
     prf.add_argument("--bar",
                      help="Make stacked bar chart of SV lengths coloured by validation status",
                      action="store_true")
+    prf.add_argument("--ignore_chroms",
+                     help="Chromosomes to ignore for prf calculation.",
+                     nargs='*',
+                     default=['chrEBV'])
+
     args = parser.parse_args()
     if not args.command:
         sys.stderr.write("INPUT ERROR: sub-command required\n\n")

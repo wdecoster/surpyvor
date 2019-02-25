@@ -24,10 +24,10 @@ def normalize_vcf(vcff):
     return name
 
 
-def get_variant_identifiers(vcf):
+def get_variant_identifiers(vcf, ignore_chroms):
     positions = [[], []]
     for v in VCF(vcf):
-        if not v.CHROM == 'chrEBV':
+        if v.CHROM not in ignore_chroms:
             for index, call in enumerate(v.gt_types):
                 if is_variant(call):
                     positions[index].append(

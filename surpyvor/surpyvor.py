@@ -19,6 +19,8 @@ def main():
                  estimate_distance_arg=args.estimate_distance,
                  minlength=args.minlength,
                  output=args.output)
+    elif args.command == "highsens":
+        sv_merge(samples=vcf_concat(samples=args.files),
                  distance=100,
                  callers=1,
                  type_arg=True,
@@ -74,6 +76,15 @@ def sv_merge(samples, distance, callers, type_arg, strand_arg,
     sys.stderr.write("Executing SURVIVOR...\n")
     subprocess.call(shlex.split(survivor_cmd), stdout=subprocess.DEVNULL)
     os.close(fhf)
+
+
+def vcf_concat(vcffiles):
+    fhf, concatenated = tempfile.mkstemp()
+    bcftools_concat_cmd = "bcftools concat -o {out} {inp}".format(
+        out=concatenated,
+        inp=' '.join(vcffiles))
+    subprocess.call(shlex.split(bcftools_concat_cmd))
+    return concatenated
 
 
 def get_args():

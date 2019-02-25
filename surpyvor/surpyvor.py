@@ -80,7 +80,7 @@ def sv_merge(samples, distance, callers, type_arg, strand_arg,
 
 def vcf_concat(vcffiles):
     fhf, concatenated = tempfile.mkstemp()
-    bcftools_concat_cmd = "bcftools concat -o {out} {inp}".format(
+    bcftools_concat_cmd = "bcftools concat {inp} | bcftools sort -o {out}".format(
         out=concatenated,
         inp=' '.join(vcffiles))
     subprocess.call(shlex.split(bcftools_concat_cmd))

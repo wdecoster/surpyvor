@@ -102,6 +102,8 @@ def precision_recall_fmeasure(args):
     print(f"F-measure: {round(fmeasure, ndigits=4)}")
     if args.bar:
         plots.bar_chart(vcf_out)
+    if args.matrix:
+        utils.confusion_matrix(vcf_out, names=['truth', 'test'])
 
 
 if __name__ == '__main__':

@@ -88,9 +88,6 @@ def get_args():
     prf_opt.add_argument("-i", "--ignore_type",
                          help="Ignore the type of the structural variant",
                          action="store_true")
-    prf_opt.add_argument("--bar",
-                         help="Make stacked bar chart of SV lengths coloured by validation status",
-                         action="store_true")
     prf_opt.add_argument("--ignore_chroms",
                          help="Chromosomes to ignore for prf calculation.",
                          nargs='*',
@@ -98,6 +95,12 @@ def get_args():
     prf_opt.add_argument("--keepmerged",
                          help="Save merged vcf file.",
                          default=False)
+    prf_opt.add_argument("--bar",
+                         help="Make stacked bar chart of SV lengths coloured by validation status",
+                         action="store_true")
+    prf_opt.add_argument("--matrix",
+                         help="Make a confusion matrix.",
+                         action="store_true")
     args = parser.parse_args()
     if not args.command:
         sys.stderr.write("INPUT ERROR: sub-command required\n\n")

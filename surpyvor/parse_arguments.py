@@ -95,6 +95,9 @@ def get_args():
                          help="Chromosomes to ignore for prf calculation.",
                          nargs='*',
                          default=['chrEBV'])
+    prf_opt.add_argument("--keepmerged",
+                         help="Save merged vcf file.",
+                         default=False)
     args = parser.parse_args()
     if not args.command:
         sys.stderr.write("INPUT ERROR: sub-command required\n\n")

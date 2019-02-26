@@ -32,14 +32,14 @@ def normalize_vcf(vcff):
     return name
 
 
-def get_variant_identifiers(vcf, ignore_chroms):
+def get_variant_identifiers(vcf, ignore_chroms, num_samples=2):
     """Get sets of variants for each sample in a merged vcf.
 
     Loop over the vcf file, adding a unique identifier to the
     respective list if the sample has a variant for that position
     return as set
     """
-    positions = [[], []]
+    positions = [[] for _ in range(num_samples)]
     for v in VCF(vcf):
         if v.CHROM not in ignore_chroms:
             for index, call in enumerate(v.gt_types):

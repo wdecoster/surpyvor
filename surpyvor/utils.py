@@ -5,6 +5,7 @@ import subprocess
 import shlex
 import pandas as pd
 import gzip
+from collections import defaultdict
 
 
 def is_variant(call):
@@ -39,8 +40,34 @@ def get_variant_identifiers(vcf, ignore_chroms):
                     positions[index].append(
                         "{}:{}-{}".format(v.CHROM, v.start, v.INFO.get('SVTYPE')))
     identifier_sets = [set(i) for i in positions]
-
     return identifier_sets
+
+
+def gt_types_to_binary_comparison(calls):
+    """From an array of calls, check if a variant position qualifies as a variant.
+
+    0,1,2,3==HOM_REF, HET, UNKNOWN, HOM_ALT
+    Return string of 1s and 0s to represent position"""
+    binary_calls = []
+    for call in calls:
+        if call == 1 or call == 3:
+            binary_calls.append(1)
+        else:
+            binary_calls.append(0)
+    return ''.join([str(i) for i in binary_calls])
+
+
+def make_sets(vcf, names):
+    """From the merged SV file, return pd.Series of overlapping sets.
+
+    Intended for making an upset plot"""
+    calls = defaultdict(int)
+    for v in VCF(vcf):
+        calls[gt_types_to_binary_comparison(v.gt_types)] += 1
+    tf_array = [[True, False]] * len(list(calls.keys())[0])
+    index = pd.MultiIndex.from_product(tf_array, names=names)
+    values = [calls[''.join([str(int(j)) for j in i])] for i in index]
+    return pd.Series(values, index=index)
 
 
 def vcf_concat(vcffiles):

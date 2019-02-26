@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from surpyvor import utils
 import numpy as np
 from matplotlib_venn import venn2
+from upsetplot import plot as upsetplot
 
 
 def bar_chart(vcf, outname="stacked_bar.png"):
@@ -50,3 +51,8 @@ def venn(sets, outname="venn.png"):
     venn2(sets, set_labels=('Truth', 'Test'))
     plt.savefig(outname)
     plt.close()
+
+
+def upset_plot(upsets):
+    upsetplot(upsets, sort_by='cardinality')
+    plt.savefig("UpSetPlot.png")

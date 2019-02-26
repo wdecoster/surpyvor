@@ -3,6 +3,7 @@ import tempfile
 from cyvcf2 import VCF
 import subprocess
 import shlex
+import gzip
 
 
 def is_variant(call):
@@ -18,7 +19,11 @@ def is_variant(call):
 def normalize_vcf(vcff):
     handle, name = tempfile.mkstemp()
     out = open(name, 'w')
-    for line in open(vcff):
+    if vcff.endswith('.gz'):
+        vcf = gzip.open(vcff, 'rt')
+    else:
+        vcf = open(vcff)
+    for line in vcf:
         out.write(line.replace('DUP', 'INS'))
     os.close(handle)
     return name

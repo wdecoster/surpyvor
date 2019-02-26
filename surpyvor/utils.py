@@ -19,6 +19,7 @@ def is_variant(call):
 
 
 def normalize_vcf(vcff):
+    """Normalize a vcf by changing DUP to INS"""
     handle, name = tempfile.mkstemp()
     out = open(name, 'w')
     if vcff.endswith('.gz'):
@@ -32,6 +33,12 @@ def normalize_vcf(vcff):
 
 
 def get_variant_identifiers(vcf, ignore_chroms):
+    """Get sets of variants for each sample in a merged vcf.
+
+    Loop over the vcf file, adding a unique identifier to the
+    respective list if the sample has a variant for that position
+    return as set
+    """
     positions = [[], []]
     for v in VCF(vcf):
         if v.CHROM not in ignore_chroms:

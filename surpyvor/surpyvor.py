@@ -39,21 +39,7 @@ def main():
     elif args.command == 'prf':
         precision_recall_fmeasure(args)
     elif args.command == 'upset':
-        if args.keepmerged:
-            vcf_out = args.keepmerged
-        else:
-            fhv, vcf_out = tempfile.mkstemp()
-        sv_merge(samples=[utils.normalize_vcf(s) for s in args.variants],
-                 distance=args.distance,
-                 callers=1,
-                 type_arg=-1 if args.ignore_type else 1,
-                 strand_arg=-1,
-                 estimate_distance_arg=-1,
-                 minlength=args.minlength,
-                 output=vcf_out)
-        upsets = utils.make_sets(vcf=vcf_out,
-                                 names=args.names or args.variants)
-        plots.upset_plot(upsets)
+        upset(args)
 
 
 def sv_merge(samples, distance, callers, type_arg, strand_arg,
@@ -120,6 +106,24 @@ def precision_recall_fmeasure(args):
         plots.bar_chart(vcf_out)
     if args.matrix:
         utils.confusion_matrix(vcf_out, names=['truth', 'test'])
+
+
+def upset(args):
+    if args.keepmerged:
+        vcf_out = args.keepmerged
+    else:
+        fhv, vcf_out = tempfile.mkstemp()
+    sv_merge(samples=[utils.normalize_vcf(s) for s in args.variants],
+             distance=args.distance,
+             callers=1,
+             type_arg=-1 if args.ignore_type else 1,
+             strand_arg=-1,
+             estimate_distance_arg=-1,
+             minlength=args.minlength,
+             output=vcf_out)
+    upsets = utils.make_sets(vcf=vcf_out,
+                             names=args.names or args.variants)
+    plots.upset_plot(upsets)
 
 
 if __name__ == '__main__':

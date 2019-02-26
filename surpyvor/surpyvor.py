@@ -40,6 +40,8 @@ def main():
         precision_recall_fmeasure(args)
     elif args.command == 'upset':
         upset(args)
+    elif args.command == 'venn':
+        venn(args)
 
 
 def sv_merge(samples, distance, callers, type_arg, strand_arg,
@@ -99,7 +101,7 @@ def precision_recall_fmeasure(args):
     vcf_out = default_merge(args, variants=[args.truth, args.test])
     truth_set, test_set = utils.get_variant_identifiers(vcf=vcf_out,
                                                         ignore_chroms=args.ignore_chroms)
-    plots.venn((truth_set, test_set))
+    plots.venn_diagram((truth_set, test_set), labels=('Truth', 'Test'))
     tp = len(truth_set & test_set)
     precision = tp / len(test_set)
     print(f"Precision: {round(precision, ndigits=4)}")
@@ -118,6 +120,14 @@ def upset(args):
     upsets = utils.make_sets(vcf=vcf_out,
                              names=args.names or args.variants)
     plots.upset_plot(upsets)
+
+
+def venn(args):
+    vcf_out = default_merge(args, args.variants)
+    sets = utils.get_variant_identifiers(vcf=vcf_out,
+                                         ignore_chroms=[],
+                                         num_samples=len(args.variants))
+    plots.venn_diagram(sets, labels=args.names or args.variants, num_samples=len(args.variants))
 
 
 if __name__ == '__main__':

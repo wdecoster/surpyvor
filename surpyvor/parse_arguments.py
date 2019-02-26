@@ -101,6 +101,28 @@ def get_args():
     prf_opt.add_argument("--matrix",
                          help="Make a confusion matrix.",
                          action="store_true")
+    venn = subparsers.add_parser('venn', help="Make venn diagram for 2 or 3 SV vcf files")
+    venn_req = venn.add_argument_group('required arguments')
+    venn_req.add_argument("--variants",
+                          help="vcfs containing structural variants",
+                          required=True,
+                          nargs="*")
+    venn_opt = venn.add_argument_group('optional arguments')
+    venn_opt.add_argument("--names",
+                          help="Names of datasets in --variants",
+                          nargs="*")
+    venn_opt.add_argument("-d", "--distance",
+                          help="maximum distance between test and truth call",
+                          default=500)
+    venn_opt.add_argument("--minlength",
+                          help="Minimum length of SVs to be taken into account",
+                          default=50)
+    venn_opt.add_argument("-i", "--ignore_type",
+                          help="Ignore the type of the structural variant",
+                          action="store_true")
+    venn_opt.add_argument("--keepmerged",
+                          help="Save merged vcf file",
+                          action="store_true")
     upset = subparsers.add_parser('upset', help="Make upset plot for multiple SV vcf files")
     upset_req = upset.add_argument_group('required arguments')
     upset_req.add_argument("--variants",
@@ -128,11 +150,15 @@ def get_args():
         sys.stderr.write("INPUT ERROR: sub-command required\n\n")
         parser.print_help()
         sys.exit()
-    if args.command == 'upset':
+    if args.command in ['upset', 'venn']:
         if args.names:
             if not len(args.variants) == len(args.names):
                 sys.exit("INPUT ERROR: "
                          "Need to have same number of values in --names as --variants!")
+    if args.command == 'venn':
+        if len(args.variants) > 3:
+            sys.exit("INPUT ERROR: "
+                     "Venn diagrams are only created for 2 or 3 vcf files!")
     return args
 
 

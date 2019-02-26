@@ -2,7 +2,7 @@ from cyvcf2 import VCF
 import matplotlib.pyplot as plt
 from surpyvor import utils
 import numpy as np
-from matplotlib_venn import venn2
+from matplotlib_venn import venn2, venn3
 from upsetplot import plot as upsetplot
 
 
@@ -47,12 +47,16 @@ def bar_chart(vcf, outname="stacked_bar.png"):
     plt.close()
 
 
-def venn(sets, outname="venn.png"):
-    venn2(sets, set_labels=('Truth', 'Test'))
-    plt.savefig(outname)
-    plt.close()
-
-
 def upset_plot(upsets):
     upsetplot(upsets, sort_by='cardinality')
     plt.savefig("UpSetPlot.png")
+
+
+def venn_diagram(sets, labels, num_samples=2, outname="venn.png"):
+    if num_samples == 2:
+        venn = venn2
+    else:
+        venn = venn3
+    venn(sets, set_labels=labels)
+    plt.savefig(outname)
+    plt.close()

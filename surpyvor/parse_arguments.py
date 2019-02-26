@@ -5,8 +5,8 @@ import sys
 
 
 def get_args():
-    parser = ArgumentParser(description="A wrapper around SURVIVOR, with convenience functions",
-                            formatter_class=ArgumentDefaultsHelpFormatter)
+    parser = ArgumentParser(description="A wrapper around SURVIVOR, with convenience functions.",
+                            formatter_class=ArgumentDefaultsHelpFormatter,)
     parser.add_argument("-v", "--version",
                         action="version",
                         version='surpyvor: {}, SURVIVOR {}'.format(
@@ -14,7 +14,8 @@ def get_args():
                         help="Print version and quit.")
     subparsers = parser.add_subparsers(dest='command',
                                        title='[sub-commands]')
-    merge = subparsers.add_parser("merge", help="merging vcf files of SVs")
+    merge = subparsers.add_parser("merge",
+                                  help="merging vcf files of SVs",)
     merge_req = merge.add_argument_group('required arguments')
     merge_req.add_argument("-f", "--files",
                            nargs='+',
@@ -48,7 +49,8 @@ def get_args():
                            action="store_true",
                            default=False,
                            help="Estimate distance between calls")
-    highsens = subparsers.add_parser("highsens", help="get union of SV vcfs")
+    highsens = subparsers.add_parser("highsens",
+                                     help="get union of SV vcfs")
     highsens_req = highsens.add_argument_group('required arguments')
     highsens_req.add_argument("-f", "--files",
                               nargs='+',
@@ -57,7 +59,8 @@ def get_args():
     highsens_req.add_argument("-o", "--output",
                               help="output file",
                               required=True)
-    highconf = subparsers.add_parser("highconf", help="get intersection of SV vcfs")
+    highconf = subparsers.add_parser("highconf",
+                                     help="get intersection of SV vcfs")
     highconf_req = highconf.add_argument_group('required arguments')
     highconf_req.add_argument("-f", "--files",
                               nargs='+',
@@ -66,7 +69,8 @@ def get_args():
     highconf_req.add_argument("-o", "--output",
                               help="output file",
                               required=True)
-    prf = subparsers.add_parser('prf', help="calculate precision, recall and F-measure")
+    prf = subparsers.add_parser('prf',
+                                help="calculate precision, recall and F-measure",)
     prf_req = prf.add_argument_group('required arguments')
     prf_req.add_argument("--truth",
                          help="vcf containing truth set",
@@ -91,7 +95,6 @@ def get_args():
                          help="Chromosomes to ignore for prf calculation.",
                          nargs='*',
                          default=['chrEBV'])
-
     args = parser.parse_args()
     if not args.command:
         sys.stderr.write("INPUT ERROR: sub-command required\n\n")

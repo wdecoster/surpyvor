@@ -79,12 +79,12 @@ def sv_merge(samples, distance, callers, type_arg, strand_arg,
     os.close(fhf)
 
 
-def precision_recall_fmeasure(args):
+def default_merge(args, variants):
     if args.keepmerged:
         vcf_out = args.keepmerged
     else:
         fhv, vcf_out = tempfile.mkstemp()
-    sv_merge(samples=[utils.normalize_vcf(s) for s in [args.truth, args.test]],
+    sv_merge(samples=[utils.normalize_vcf(s) for s in variants],
              distance=args.distance,
              callers=1,
              type_arg=-1 if args.ignore_type else 1,
@@ -92,6 +92,11 @@ def precision_recall_fmeasure(args):
              estimate_distance_arg=-1,
              minlength=args.minlength,
              output=vcf_out)
+    return vcf_out
+
+
+def precision_recall_fmeasure(args):
+    vcf_out = default_merge(args, variants=[args.truth, args.test])
     truth_set, test_set = utils.get_variant_identifiers(vcf=vcf_out,
                                                         ignore_chroms=args.ignore_chroms)
     plots.venn((truth_set, test_set))
@@ -109,18 +114,7 @@ def precision_recall_fmeasure(args):
 
 
 def upset(args):
-    if args.keepmerged:
-        vcf_out = args.keepmerged
-    else:
-        fhv, vcf_out = tempfile.mkstemp()
-    sv_merge(samples=[utils.normalize_vcf(s) for s in args.variants],
-             distance=args.distance,
-             callers=1,
-             type_arg=-1 if args.ignore_type else 1,
-             strand_arg=-1,
-             estimate_distance_arg=-1,
-             minlength=args.minlength,
-             output=vcf_out)
+    vcf_out = default_merge(args, args.variants)
     upsets = utils.make_sets(vcf=vcf_out,
                              names=args.names or args.variants)
     plots.upset_plot(upsets)

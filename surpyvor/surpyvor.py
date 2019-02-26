@@ -37,31 +37,7 @@ def main():
                  minlength=50,
                  output=args.output)
     elif args.command == 'prf':
-        fhv, vcf_out = tempfile.mkstemp()
-        if args.ignore_type:
-            ignore_type = "-1"
-        else:
-            ignore_type = "1"
-        combined_vcf = sv_merge(samples=[utils.normalize_vcf(s) for s in [args.truth, args.test]],
-                                distance=args.distance,
-                                callers=1,
-                                type_arg=ignore_type,
-                                strand_arg=-1,
-                                estimate_distance_arg=-1,
-                                minlength=args.minlength,
-                                output=vcf_out)
-        truth_set, test_set = utils.get_variant_identifiers(vcf=combined_vcf,
-                                                            ignore_chroms=args.ignore_chroms)
-        plots.venn((truth_set, test_set))
-        tp = len(truth_set & test_set)
-        precision = tp / len(test_set)
-        recall = tp / len(truth_set)
-        fmeasure = 2*(precision*recall)/(precision + recall)
-        print(f"Precision: {round(precision, ndigits=4)}%")
-        print(f"Recall: {round(recall, ndigits=4)}%")
-        print(f"F-measure: {round(fmeasure, ndigits=4)}")
-        if args.bar:
-            plots.bar_chart(combined_vcf)
+        precision_recall_fmeasure(args)
 
 
 def sv_merge(samples, distance, callers, type_arg, strand_arg,
@@ -99,6 +75,33 @@ def sv_merge(samples, distance, callers, type_arg, strand_arg,
     sys.stderr.write("Executing SURVIVOR...\n")
     subprocess.call(shlex.split(survivor_cmd), stdout=subprocess.DEVNULL)
     os.close(fhf)
+
+
+def precision_recall_fmeasure(args):
+    if args.keepmerged:
+        vcf_out = args.keepmerged
+    else:
+        fhv, vcf_out = tempfile.mkstemp()
+    sv_merge(samples=[utils.normalize_vcf(s) for s in [args.truth, args.test]],
+             distance=args.distance,
+             callers=1,
+             type_arg=-1 if args.ignore_type else 1,
+             strand_arg=-1,
+             estimate_distance_arg=-1,
+             minlength=args.minlength,
+             output=vcf_out)
+    truth_set, test_set = utils.get_variant_identifiers(vcf=vcf_out,
+                                                        ignore_chroms=args.ignore_chroms)
+    plots.venn((truth_set, test_set))
+    tp = len(truth_set & test_set)
+    precision = tp / len(test_set)
+    print(f"Precision: {round(precision, ndigits=4)}")
+    recall = tp / len(truth_set)
+    print(f"Recall: {round(recall, ndigits=4)}")
+    fmeasure = 2*(precision*recall)/(precision + recall)
+    print(f"F-measure: {round(fmeasure, ndigits=4)}")
+    if args.bar:
+        plots.bar_chart(vcf_out)
 
 
 if __name__ == '__main__':

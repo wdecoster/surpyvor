@@ -10,7 +10,7 @@ def main():
     args = parse_arguments.get_args()
 
     if args.command == "merge":
-        sv_merge(samples=args.files,
+        sv_merge(samples=args.variants,
                  distance=args.distance,
                  callers=args.callers,
                  require_type=not args.ignore_type,
@@ -19,7 +19,7 @@ def main():
                  minlength=args.minlength,
                  output=args.output)
     elif args.command == "highsens":
-        sv_merge(samples=utils.vcf_concat(samples=args.files),
+        sv_merge(samples=utils.vcf_concat(samples=args.variants),
                  distance=100,
                  callers=1,
                  require_type=True,
@@ -28,9 +28,9 @@ def main():
                  minlength=50,
                  output=args.output)
     elif args.command == "highconf":
-        sv_merge(samples=args.files,
+        sv_merge(samples=args.variants,
                  distance=500,
-                 callers=len(args.files),
+                 callers=len(args.variants),
                  require_type=True,
                  require_strand=False,
                  estimate_distance=False,

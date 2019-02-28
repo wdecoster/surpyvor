@@ -17,7 +17,7 @@ def get_args():
     merge = subparsers.add_parser("merge",
                                   help="merging vcf files of SVs",)
     merge_req = merge.add_argument_group('required arguments')
-    merge_req.add_argument("-f", "--files",
+    merge_req.add_argument("--variants",
                            nargs='+',
                            required=True,
                            help="vcf files to merge")
@@ -52,7 +52,7 @@ def get_args():
     highsens = subparsers.add_parser("highsens",
                                      help="get union of SV vcfs")
     highsens_req = highsens.add_argument_group('required arguments')
-    highsens_req.add_argument("-f", "--files",
+    highsens_req.add_argument("--variants",
                               nargs='+',
                               required=True,
                               help="vcf files to merge")
@@ -62,7 +62,7 @@ def get_args():
     highconf = subparsers.add_parser("highconf",
                                      help="get intersection of SV vcfs")
     highconf_req = highconf.add_argument_group('required arguments')
-    highconf_req.add_argument("-f", "--files",
+    highconf_req.add_argument("--variants",
                               nargs='+',
                               required=True,
                               help="vcf files to merge")

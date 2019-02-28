@@ -13,27 +13,27 @@ def main():
         sv_merge(samples=args.files,
                  distance=args.distance,
                  callers=args.callers,
-                 type_arg=args.type,
-                 strand_arg=args.strand,
-                 estimate_distance_arg=args.estimate_distance,
+                 require_type=not args.ignore_type,
+                 require_strand=args.strand,
+                 estimate_distance=args.estimate_distance,
                  minlength=args.minlength,
                  output=args.output)
     elif args.command == "highsens":
         sv_merge(samples=utils.vcf_concat(samples=args.files),
                  distance=100,
                  callers=1,
-                 type_arg=True,
-                 strand_arg=False,
-                 estimate_distance_arg=False,
+                 require_type=True,
+                 require_strand=False,
+                 estimate_distance=False,
                  minlength=50,
                  output=args.output)
     elif args.command == "highconf":
         sv_merge(samples=args.files,
                  distance=500,
                  callers=len(args.files),
-                 type_arg=True,
-                 strand_arg=False,
-                 estimate_distance_arg=False,
+                 require_type=True,
+                 require_strand=False,
+                 estimate_distance=False,
                  minlength=50,
                  output=args.output)
     elif args.command == 'prf':
@@ -44,8 +44,8 @@ def main():
         venn(args)
 
 
-def sv_merge(samples, distance, callers, type_arg, strand_arg,
-             estimate_distance_arg, minlength, output):
+def sv_merge(samples, distance, callers, require_type, require_strand,
+             estimate_distance, minlength, output):
     """
     Executes SURVIVOR merge, with parameters:
     -samples.fofn (samples, list)
@@ -60,20 +60,13 @@ def sv_merge(samples, distance, callers, type_arg, strand_arg,
     with open(fofn_f, 'w') as fofn:
         for s in samples:
             fofn.write(s + "\n")
-    type, strand, estimate_distance = (0, 0, 0)
-    if type_arg:
-        type = 1
-    if strand_arg:
-        strand = 1
-    if estimate_distance_arg:
-        estimate_distance = 1
     survivor_cmd = "SURVIVOR merge {fof} {dist} {call} {typ} {str} {estm} {ml} {out}".format(
         fof=fofn_f,
         dist=distance,
         call=callers,
-        typ=type,
-        str=strand,
-        estm=estimate_distance,
+        typ=1 if require_type else -1,
+        str=1 if require_strand else -1,
+        estm=1 if estimate_distance else -1,
         ml=minlength,
         out=output)
     sys.stderr.write("Executing SURVIVOR...\n")
@@ -89,9 +82,9 @@ def default_merge(args, variants):
     sv_merge(samples=[utils.normalize_vcf(s) for s in variants],
              distance=args.distance,
              callers=1,
-             type_arg=-1 if args.ignore_type else 1,
-             strand_arg=-1,
-             estimate_distance_arg=-1,
+             require_type=not args.ignore_type,
+             require_strand=False,
+             estimate_distance=False,
              minlength=args.minlength,
              output=vcf_out)
     return vcf_out

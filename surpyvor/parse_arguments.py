@@ -37,10 +37,10 @@ def get_args():
                            type=int,
                            default=1,
                            help="Minimum number of callers to support a variant")
-    merge_opt.add_argument("-t", "--type",
+    merge_opt.add_argument("-i", "--ignore_type",
+                           help="Ignore the type of the structural variant",
                            action="store_true",
-                           default=False,
-                           help="Take type into account")
+                           default=False)
     merge_opt.add_argument("-s", "--strand",
                            action="store_true",
                            default=False,
@@ -87,7 +87,8 @@ def get_args():
                          default=50)
     prf_opt.add_argument("-i", "--ignore_type",
                          help="Ignore the type of the structural variant",
-                         action="store_true")
+                         action="store_true",
+                         default=False)
     prf_opt.add_argument("--ignore_chroms",
                          help="Chromosomes to ignore for prf calculation.",
                          nargs='*',
@@ -119,7 +120,8 @@ def get_args():
                           default=50)
     venn_opt.add_argument("-i", "--ignore_type",
                           help="Ignore the type of the structural variant",
-                          action="store_true")
+                          action="store_true",
+                          default=False)
     venn_opt.add_argument("--keepmerged",
                           help="Save merged vcf file",
                           action="store_true")
@@ -141,7 +143,8 @@ def get_args():
                            default=50)
     upset_opt.add_argument("-i", "--ignore_type",
                            help="Ignore the type of the structural variant",
-                           action="store_true")
+                           action="store_true",
+                           default=False)
     upset_opt.add_argument("--keepmerged",
                            help="Save merged vcf file",
                            action="store_true")

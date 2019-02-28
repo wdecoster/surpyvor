@@ -69,8 +69,9 @@ def sv_merge(samples, distance, callers, require_type, require_strand,
         estm=1 if estimate_distance else -1,
         ml=minlength,
         out=output)
-    sys.stderr.write("Executing SURVIVOR...\n")
+    print("Executing SURVIVOR...", end="", flush=True, file=sys.stderr)
     subprocess.call(shlex.split(survivor_cmd), stdout=subprocess.DEVNULL)
+    print("DONE", file=sys.stderr)
     os.close(fhf)
 
 

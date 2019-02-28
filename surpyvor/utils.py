@@ -78,11 +78,10 @@ def make_sets(vcf, names):
 
 
 def vcf_concat(vcffiles):
-    fhf, concatenated = tempfile.mkstemp()
-    bcftools_concat_cmd = "bcftools concat {inp} | bcftools sort -o {out}".format(
-        out=concatenated,
-        inp=' '.join(vcffiles))
-    subprocess.call(shlex.split(bcftools_concat_cmd))
+    _, concatenated = tempfile.mkstemp()
+    c = subprocess.Popen(shlex.split("bcftools concat -a {}".format(' '.join(vcffiles))),
+                         stdout=subprocess.PIPE)
+    subprocess.call(shlex.split("bcftools sort -o {}".format(concatenated)), stdin=c.stdout)
     return concatenated
 
 

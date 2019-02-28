@@ -58,7 +58,7 @@ def sv_merge(samples, distance, callers, require_type, require_strand,
     """
     fhf, fofn_f = tempfile.mkstemp()
     with open(fofn_f, 'w') as fofn:
-        for s in samples:
+        for s in [utils.decompress(s) for s in samples]:
             fofn.write(s + "\n")
     survivor_cmd = "SURVIVOR merge {fof} {dist} {call} {typ} {str} {estm} {ml} {out}".format(
         fof=fofn_f,

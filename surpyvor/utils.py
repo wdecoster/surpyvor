@@ -85,6 +85,18 @@ def vcf_concat(vcffiles):
     return concatenated
 
 
+def decompress(vcf):
+    """
+    Decompress output to temporary file if filename endswith .gz or .bgz
+    """
+    if vcf.endswith('.vcf'):
+        return vcf
+    elif vcf.endswith(('.gz', '.bgz')):
+        handle, output = tempfile.mkstemp()
+        subprocess.call(shlex.split("bgzip -cd {}".format(vcf)), stdout=handle)
+        return output
+
+
 def confusion_matrix(vcff, names):
     """
     First level of the dict is the "first" call, second level is the "second" sample

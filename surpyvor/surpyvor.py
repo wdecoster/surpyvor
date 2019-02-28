@@ -19,7 +19,7 @@ def main():
                  minlength=args.minlength,
                  output=args.output)
     elif args.command == "highsens":
-        sv_merge(samples=utils.vcf_concat(samples=args.variants),
+        sv_merge(samples=utils.vcf_concat(args.variants),
                  distance=100,
                  callers=1,
                  require_type=True,

@@ -78,7 +78,7 @@ def default_merge(args, variants):
     if args.keepmerged:
         vcf_out = args.keepmerged
     else:
-        fhv, vcf_out = tempfile.mkstemp()
+        _, vcf_out = tempfile.mkstemp()
     sv_merge(samples=[utils.normalize_vcf(s) for s in variants],
              distance=args.distance,
              callers=1,

@@ -79,22 +79,33 @@ def make_sets(vcf, names):
 
 def vcf_concat(vcffiles):
     _, concatenated = tempfile.mkstemp()
+    vcffiles = [compress_and_tabix(f) for f in vcffiles]
     c = subprocess.Popen(shlex.split("bcftools concat -a {}".format(' '.join(vcffiles))),
                          stdout=subprocess.PIPE)
     subprocess.call(shlex.split("bcftools sort -o {}".format(concatenated)), stdin=c.stdout)
     return concatenated
 
 
+def compress_and_tabix(vcf):
+    if vcf.endswith('.vcf'):
+        handle, output = tempfile.mkstemp()
+        subprocess.call(shlex.split("bgzip -c {}".format(vcf)), stdout=handle)
+        subprocess.call(shlex.split("tabix -p vcf {}".format(output)))
+        return output
+    else:
+        return vcf
+
+
 def decompress(vcf):
     """
     Decompress output to temporary file if filename endswith .gz or .bgz
     """
-    if vcf.endswith('.vcf'):
-        return vcf
-    elif vcf.endswith(('.gz', '.bgz')):
+    if vcf.endswith(('.gz', '.bgz')):
         handle, output = tempfile.mkstemp()
         subprocess.call(shlex.split("bgzip -cd {}".format(vcf)), stdout=handle)
         return output
+    else:
+        return vcf
 
 
 def confusion_matrix(vcff, names):

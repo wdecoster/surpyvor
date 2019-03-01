@@ -2,6 +2,7 @@ from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from .version import __version__
 import subprocess
 import sys
+from os import path
 
 
 def get_args():
@@ -149,6 +150,11 @@ def get_args():
                            help="Save merged vcf file",
                            action="store_true")
     args = parser.parse_args()
+    validate_args(parser, args)
+    return args
+
+
+def validate_args(parser, args):
     if not args.command:
         sys.stderr.write("INPUT ERROR: sub-command required\n\n")
         parser.print_help()
@@ -162,7 +168,16 @@ def get_args():
         if len(args.variants) > 3:
             sys.exit("INPUT ERROR: "
                      "Venn diagrams are only created for 2 or 3 vcf files!")
-    return args
+    if args.variants:
+        for f in args.variants:
+            if not path.isfile(f):
+                sys.exit("File not found: {}".format(f))
+    if args.truth:
+        if not path.isfile(args.truth):
+            sys.exit("File not found: {}".format(args.truth))
+    if args.test:
+        if not path.isfile(args.test):
+            sys.exit("File not found: {}".format(args.test))
 
 
 def get_survivor_version():

@@ -1,4 +1,6 @@
 import os
+import sys
+import shutil
 import tempfile
 from cyvcf2 import VCF
 import subprocess
@@ -106,6 +108,15 @@ def decompress(vcf):
         return output
     else:
         return vcf
+
+
+def test_dependencies():
+    def which(exec):
+        return shutil.which(exec)
+    for dependency in ['bcftools', 'bgzip', 'tabix', 'SURVIVOR']:
+        if not which(dependency):
+            sys.exit("ERROR: Could not find required executable '{}'.\n"
+                     "Make sure it is installed and in $PATH".format(dependency))
 
 
 def confusion_matrix(vcff, names):

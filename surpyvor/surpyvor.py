@@ -8,7 +8,7 @@ import os
 
 def main():
     args = parse_arguments.get_args()
-
+    utils.test_dependencies()
     if args.command == "merge":
         sv_merge(samples=args.variants,
                  distance=args.distance,

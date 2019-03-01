@@ -168,14 +168,14 @@ def validate_args(parser, args):
         if len(args.variants) > 3:
             sys.exit("INPUT ERROR: "
                      "Venn diagrams are only created for 2 or 3 vcf files!")
-    if args.variants:
+    if hasattr(args, 'variants'):
         for f in args.variants:
             if not path.isfile(f):
                 sys.exit("File not found: {}".format(f))
-    if args.truth:
+    if hasattr(args, 'truth'):
         if not path.isfile(args.truth):
             sys.exit("File not found: {}".format(args.truth))
-    if args.test:
+    if hasattr(args, 'test'):
         if not path.isfile(args.test):
             sys.exit("File not found: {}".format(args.test))
 

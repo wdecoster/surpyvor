@@ -126,6 +126,8 @@ def get_args():
     venn_opt.add_argument("--keepmerged",
                           help="Save merged vcf file",
                           action="store_true")
+    venn_opt.add_argument("--plotout",
+                          help="Name of output plot")
     upset = subparsers.add_parser('upset', help="Make upset plot for multiple SV vcf files")
     upset_req = upset.add_argument_group('required arguments')
     upset_req.add_argument("--variants",
@@ -149,6 +151,8 @@ def get_args():
     upset_opt.add_argument("--keepmerged",
                            help="Save merged vcf file",
                            action="store_true")
+    upset_opt.add_argument("--plotout",
+                           help="Name of output plot")
     args = parser.parse_args()
     validate_args(parser, args)
     return args

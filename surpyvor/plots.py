@@ -47,9 +47,9 @@ def bar_chart(vcf, outname="stacked_bar.png"):
     plt.close()
 
 
-def upset_plot(upsets):
+def upset_plot(upsets, outname="UpSetPlot.png"):
     upsetplot(upsets, sort_by='cardinality')
-    plt.savefig("UpSetPlot.png")
+    plt.savefig(outname)
 
 
 def venn_diagram(sets, labels, num_samples=2, outname="venn.png"):

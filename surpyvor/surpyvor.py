@@ -113,7 +113,7 @@ def upset(args):
     vcf_out = default_merge(args, args.variants)
     upsets = utils.make_sets(vcf=vcf_out,
                              names=args.names or args.variants)
-    plots.upset_plot(upsets)
+    plots.upset_plot(upsets, outname=args.plotout)
 
 
 def venn(args):
@@ -121,7 +121,10 @@ def venn(args):
     sets = utils.get_variant_identifiers(vcf=vcf_out,
                                          ignore_chroms=[],
                                          num_samples=len(args.variants))
-    plots.venn_diagram(sets, labels=args.names or args.variants, num_samples=len(args.variants))
+    plots.venn_diagram(sets,
+                       labels=args.names or args.variants,
+                       num_samples=len(args.variants),
+                       outname=args.plotout)
 
 
 if __name__ == '__main__':

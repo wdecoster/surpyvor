@@ -152,7 +152,8 @@ def get_args():
                            help="Save merged vcf file",
                            action="store_true")
     upset_opt.add_argument("--plotout",
-                           help="Name of output plot")
+                           help="Name of output plot",
+                           default="UpSetPlot.png")
     args = parser.parse_args()
     validate_args(parser, args)
     return args

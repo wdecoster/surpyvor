@@ -91,13 +91,16 @@ def vcf_concat(vcffiles):
 
 def reheader(vcf, sample):
     _, output = tempfile.mkstemp(suffix=".vcf")
-    subprocess.call(shlex.split("bcftools reheader -s <(echo sample) {} -o {}".format(vcf, output)))
+    handle, samplef = tempfile.mkstemp()
+    open(samplef, 'w').write(sample)
+    os.close(handle)
+    subprocess.call(shlex.split("bcftools reheader -s {} {} -o {}".format(samplef, vcf, output)))
     return output
 
 
 def compress_and_tabix(vcf):
     if vcf.endswith('.vcf'):
-        handle, output = tempfile.mkstemp(suffix=".vcf.bgz")
+        handle, output = tempfile.mkstemp(suffix=".vcf.gz")
         subprocess.call(shlex.split("bgzip -c {}".format(vcf)), stdout=handle)
         subprocess.call(shlex.split("tabix -p vcf {}".format(output)))
         return output

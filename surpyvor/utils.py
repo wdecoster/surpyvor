@@ -80,11 +80,18 @@ def make_sets(vcf, names):
 
 def vcf_concat(vcffiles):
     _, concatenated = tempfile.mkstemp(suffix=".vcf")
+    vcffiles = [reheader(f, sample="default") for f in vcffiles]
     vcffiles = [compress_and_tabix(f) for f in vcffiles]
     c = subprocess.Popen(shlex.split("bcftools concat -a {}".format(' '.join(vcffiles))),
                          stdout=subprocess.PIPE)
     subprocess.call(shlex.split("bcftools sort -o {}".format(concatenated)), stdin=c.stdout)
     return concatenated
+
+
+def reheader(vcf, sample):
+    _, output = tempfile.mkstemp(suffix=".vcf")
+    subprocess.call(shlex.split("bcftools reheader -s <(echo sample) {} -o {}".format(vcf, output)))
+    return output
 
 
 def compress_and_tabix(vcf):

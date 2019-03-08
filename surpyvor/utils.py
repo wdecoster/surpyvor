@@ -22,14 +22,13 @@ def is_variant(call):
 
 def normalize_vcf(vcff):
     """Normalize a vcf by changing DUP to INS"""
-    handle, name = tempfile.mkstemp()
-    out = open(name, 'w')
+    handle, name = tempfile.mkstemp(suffix='.vcf')
     if vcff.endswith('.gz'):
         vcf = gzip.open(vcff, 'rt')
     else:
         vcf = open(vcff)
     for line in vcf:
-        out.write(line.replace('DUP', 'INS'))
+        handle.write(line.replace('DUP', 'INS'))
     os.close(handle)
     return name
 
@@ -80,7 +79,7 @@ def make_sets(vcf, names):
 
 
 def vcf_concat(vcffiles):
-    _, concatenated = tempfile.mkstemp()
+    _, concatenated = tempfile.mkstemp(suffix=".vcf")
     vcffiles = [compress_and_tabix(f) for f in vcffiles]
     c = subprocess.Popen(shlex.split("bcftools concat -a {}".format(' '.join(vcffiles))),
                          stdout=subprocess.PIPE)
@@ -90,7 +89,7 @@ def vcf_concat(vcffiles):
 
 def compress_and_tabix(vcf):
     if vcf.endswith('.vcf'):
-        handle, output = tempfile.mkstemp()
+        handle, output = tempfile.mkstemp(suffix=".vcf.bgz")
         subprocess.call(shlex.split("bgzip -c {}".format(vcf)), stdout=handle)
         subprocess.call(shlex.split("tabix -p vcf {}".format(output)))
         return output
@@ -103,7 +102,7 @@ def decompress(vcf):
     Decompress output to temporary file if filename endswith .gz or .bgz
     """
     if vcf.endswith(('.gz', '.bgz')):
-        handle, output = tempfile.mkstemp()
+        handle, output = tempfile.mkstemp(suffix=".vcf")
         subprocess.call(shlex.split("bgzip -cd {}".format(vcf)), stdout=handle)
         return output
     else:

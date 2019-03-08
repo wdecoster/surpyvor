@@ -23,12 +23,13 @@ def is_variant(call):
 def normalize_vcf(vcff):
     """Normalize a vcf by changing DUP to INS"""
     handle, name = tempfile.mkstemp(suffix='.vcf')
+    out = open(name, 'w')
     if vcff.endswith('.gz'):
         vcf = gzip.open(vcff, 'rt')
     else:
         vcf = open(vcff)
     for line in vcf:
-        handle.write(line.replace('DUP', 'INS'))
+        out.write(line.replace('DUP', 'INS'))
     os.close(handle)
     return name
 

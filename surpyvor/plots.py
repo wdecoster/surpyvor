@@ -13,14 +13,14 @@ def bar_chart(vcf, outname="stacked_bar.png"):
     """
     len_dict = {"True": [], "False": [], "Missed": []}
     for v in VCF(vcf):
-        if not v.INFO.get('SVTYPE') == 'TRA' and abs(v.INFO.get('AVGLEN')) >= 50:
+        if not v.INFO.get('SVTYPE') == 'TRA' and abs(v.INFO.get('SVLEN')) >= 50:
             calls = [utils.is_variant(call) for call in v.gt_types]
             if calls == [True, True]:
-                len_dict['True'].append(v.INFO.get('AVGLEN'))
+                len_dict['True'].append(v.INFO.get('SVLEN'))
             elif calls == [False, True]:
-                len_dict['False'].append(v.INFO.get('AVGLEN'))
+                len_dict['False'].append(v.INFO.get('SVLEN'))
             elif calls == [True, False]:
-                len_dict['Missed'].append(v.INFO.get('AVGLEN'))
+                len_dict['Missed'].append(v.INFO.get('SVLEN'))
     plt.subplot(2, 1, 1)
     plt.hist(x=np.array(list(len_dict.values())),
              bins=[i for i in range(0, 2000, 10)],

@@ -16,7 +16,8 @@ def get_args():
     subparsers = parser.add_subparsers(dest='command',
                                        title='[sub-commands]')
     merge = subparsers.add_parser("merge",
-                                  help="merging vcf files of SVs",)
+                                  help="merging vcf files of SVs",
+                                  formatter_class=ArgumentDefaultsHelpFormatter)
     merge_req = merge.add_argument_group('required arguments')
     merge_req.add_argument("--variants",
                            nargs='+',
@@ -51,7 +52,8 @@ def get_args():
                            default=False,
                            help="Estimate distance between calls")
     highsens = subparsers.add_parser("highsens",
-                                     help="get union of SV vcfs")
+                                     help="get union of SV vcfs",
+                                     formatter_class=ArgumentDefaultsHelpFormatter)
     highsens_req = highsens.add_argument_group('required arguments')
     highsens_req.add_argument("--variants",
                               nargs='+',
@@ -61,7 +63,8 @@ def get_args():
                               help="output file",
                               required=True)
     highconf = subparsers.add_parser("highconf",
-                                     help="get intersection of SV vcfs")
+                                     help="get intersection of SV vcfs",
+                                     formatter_class=ArgumentDefaultsHelpFormatter)
     highconf_req = highconf.add_argument_group('required arguments')
     highconf_req.add_argument("--variants",
                               nargs='+',
@@ -71,7 +74,8 @@ def get_args():
                               help="output file",
                               required=True)
     prf = subparsers.add_parser('prf',
-                                help="calculate precision, recall and F-measure",)
+                                help="calculate precision, recall and F-measure",
+                                formatter_class=ArgumentDefaultsHelpFormatter)
     prf_req = prf.add_argument_group('required arguments')
     prf_req.add_argument("--truth",
                          help="vcf containing truth set",
@@ -103,7 +107,9 @@ def get_args():
     prf_opt.add_argument("--matrix",
                          help="Make a confusion matrix.",
                          action="store_true")
-    venn = subparsers.add_parser('venn', help="Make venn diagram for 2 or 3 SV vcf files")
+    venn = subparsers.add_parser('venn',
+                                 help="Make venn diagram for 2 or 3 SV vcf files",
+                                 formatter_class=ArgumentDefaultsHelpFormatter)
     venn_req = venn.add_argument_group('required arguments')
     venn_req.add_argument("--variants",
                           help="vcfs containing structural variants",
@@ -127,7 +133,9 @@ def get_args():
                           help="Save merged vcf file")
     venn_opt.add_argument("--plotout",
                           help="Name of output plot")
-    upset = subparsers.add_parser('upset', help="Make upset plot for multiple SV vcf files")
+    upset = subparsers.add_parser('upset',
+                                  help="Make upset plot for multiple SV vcf files",
+                                  formatter_class=ArgumentDefaultsHelpFormatter)
     upset_req = upset.add_argument_group('required arguments')
     upset_req.add_argument("--variants",
                            help="vcfs containing structural variants",

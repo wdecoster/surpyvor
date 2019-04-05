@@ -132,7 +132,8 @@ def get_args():
     venn_opt.add_argument("--keepmerged",
                           help="Save merged vcf file")
     venn_opt.add_argument("--plotout",
-                          help="Name of output plot")
+                          help="Name of output plot",
+                          default="venn.png")
     upset = subparsers.add_parser('upset',
                                   help="Make upset plot for multiple SV vcf files",
                                   formatter_class=ArgumentDefaultsHelpFormatter)

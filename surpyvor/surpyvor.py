@@ -57,6 +57,7 @@ def sv_merge(samples, distance, callers, require_type, require_strand,
     -specify minimal size of SV event (minlength, int)
     """
     fhf, fofn_f = tempfile.mkstemp()
+    fhs, interm_out = tempfile.mkstemp(suffix=".vcf")
     with open(fofn_f, 'w') as fofn:
         for s in [utils.decompress(s) for s in samples]:
             fofn.write(s + "\n")
@@ -68,11 +69,13 @@ def sv_merge(samples, distance, callers, require_type, require_strand,
         str=1 if require_strand else -1,
         estm=1 if estimate_distance else -1,
         ml=minlength,
-        out=output)
+        out=interm_out)
     print("Executing SURVIVOR...", end="", flush=True, file=sys.stderr)
     subprocess.call(shlex.split(survivor_cmd), stdout=subprocess.DEVNULL)
     print("DONE", file=sys.stderr)
+    utils.vcf_sort(interm_out, output)
     os.close(fhf)
+    os.close(fhs)
 
 
 def default_merge(args, variants):
@@ -101,7 +104,7 @@ def precision_recall_fmeasure(args):
     print(f"Precision: {round(precision, ndigits=4)}")
     recall = tp / len(truth_set)
     print(f"Recall: {round(recall, ndigits=4)}")
-    fmeasure = 2*(precision*recall)/(precision + recall)
+    fmeasure = 2 * (precision * recall) / (precision + recall)
     print(f"F-measure: {round(fmeasure, ndigits=4)}")
     if args.bar:
         plots.bar_chart(vcf_out)

@@ -13,8 +13,10 @@ def get_args():
                         version='surpyvor: {}, SURVIVOR {}'.format(
                             __version__, get_survivor_version()),
                         help="Print version and quit.")
+
     subparsers = parser.add_subparsers(dest='command',
                                        title='[sub-commands]')
+
     merge = subparsers.add_parser("merge",
                                   help="merging vcf files of SVs",
                                   formatter_class=ArgumentDefaultsHelpFormatter)
@@ -23,10 +25,10 @@ def get_args():
                            nargs='+',
                            required=True,
                            help="vcf files to merge")
-    merge_req.add_argument("-o", "--output",
-                           help="output file",
-                           required=True)
     merge_opt = merge.add_argument_group('optional arguments')
+    merge_opt.add_argument("-o", "--output",
+                           help="output file",
+                           default="stdout")
     merge_opt.add_argument("-d", "--distance",
                            type=int,
                            default=500,
@@ -51,6 +53,7 @@ def get_args():
                            action="store_true",
                            default=False,
                            help="Estimate distance between calls")
+
     highsens = subparsers.add_parser("highsens",
                                      help="get union of SV vcfs",
                                      formatter_class=ArgumentDefaultsHelpFormatter)
@@ -59,9 +62,11 @@ def get_args():
                               nargs='+',
                               required=True,
                               help="vcf files to merge")
-    highsens_req.add_argument("-o", "--output",
+    highsens_opt = highsens.add_argument_group('optional arguments')
+    highsens_opt.add_argument("-o", "--output",
                               help="output file",
-                              required=True)
+                              default="stdout")
+
     highconf = subparsers.add_parser("highconf",
                                      help="get intersection of SV vcfs",
                                      formatter_class=ArgumentDefaultsHelpFormatter)
@@ -70,9 +75,11 @@ def get_args():
                               nargs='+',
                               required=True,
                               help="vcf files to merge")
-    highconf_req.add_argument("-o", "--output",
+    highconf_opt = highconf.add_argument_group('optional arguments')
+    highconf_opt.add_argument("-o", "--output",
                               help="output file",
-                              required=True)
+                              default="stdout")
+
     prf = subparsers.add_parser('prf',
                                 help="calculate precision, recall and F-measure",
                                 formatter_class=ArgumentDefaultsHelpFormatter)
@@ -107,6 +114,7 @@ def get_args():
     prf_opt.add_argument("--matrix",
                          help="Make a confusion matrix.",
                          action="store_true")
+
     venn = subparsers.add_parser('venn',
                                  help="Make venn diagram for 2 or 3 SV vcf files",
                                  formatter_class=ArgumentDefaultsHelpFormatter)
@@ -134,6 +142,7 @@ def get_args():
     venn_opt.add_argument("--plotout",
                           help="Name of output plot",
                           default="venn.png")
+
     upset = subparsers.add_parser('upset',
                                   help="Make upset plot for multiple SV vcf files",
                                   formatter_class=ArgumentDefaultsHelpFormatter)

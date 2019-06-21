@@ -42,6 +42,8 @@ def main():
         upset(args)
     elif args.command == 'venn':
         venn(args)
+    elif args.command == 'haplomerge':
+        haplomerge(args)
 
 
 def sv_merge(samples, distance, callers, require_type, require_strand,
@@ -128,6 +130,11 @@ def venn(args):
                        labels=args.names or args.variants,
                        num_samples=len(args.variants),
                        outname=args.plotout)
+
+
+def haplomerge(args):
+    merged = default_merge(args, args.variants)
+    utils.merge_split_called_haplotypes(merged)
 
 
 if __name__ == '__main__':

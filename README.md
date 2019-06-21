@@ -10,3 +10,6 @@ A python wrapper around [SURVIVOR](https://github.com/fritzsedlazeck/SURVIVOR), 
     upset               Make upset plot for multiple SV vcf files
 
 Each sub-command has its own help information, accessible by running `surpyvor <command> -h/--help`
+
+## Citation
+If you use this tool, please consider citing our [publication](https://genome.cshlp.org/content/early/2019/06/11/gr.244939.118.abstract) and the [citation for SURVIVOR](https://www.nature.com/articles/ncomms14061).

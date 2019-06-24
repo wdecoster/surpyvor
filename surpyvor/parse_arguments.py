@@ -170,6 +170,43 @@ def get_args():
     upset_opt.add_argument("--plotout",
                            help="Name of output plot",
                            default="UpSetPlot.png")
+
+    haplomerge = subparsers.add_parser("haplomerge",
+                                       help="merging vcf files of SVs from two haplotypes",
+                                       formatter_class=ArgumentDefaultsHelpFormatter)
+    haplomerge_req = haplomerge.add_argument_group('required arguments')
+    haplomerge_req.add_argument("--variants",
+                                required=True,
+                                nargs=2,
+                                help="vcf files to merge")
+    haplomerge_opt = haplomerge.add_argument_group('optional arguments')
+    haplomerge_opt.add_argument("-o", "--output",
+                                help="output file",
+                                default="stdout")
+    haplomerge_opt.add_argument("-d", "--distance",
+                                type=int,
+                                default=200,
+                                help="distance between variants to merge")
+    haplomerge_opt.add_argument("-l", "--minlength",
+                                type=int,
+                                default=50,
+                                help="Minimum length of variants to consider")
+    haplomerge_opt.add_argument("-c", "--callers",
+                                type=int,
+                                default=1,
+                                help="Minimum number of callers to support a variant")
+    haplomerge_opt.add_argument("-i", "--ignore_type",
+                                help="Ignore the type of the structural variant",
+                                action="store_true",
+                                default=False)
+    haplomerge_opt.add_argument("-s", "--strand",
+                                action="store_true",
+                                default=False,
+                                help="Take strand into account")
+    haplomerge_opt.add_argument("-e", "--estimate_distance",
+                                action="store_true",
+                                default=False,
+                                help="Estimate distance between calls")
     args = parser.parse_args()
     validate_args(parser, args)
     return args

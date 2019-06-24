@@ -133,8 +133,9 @@ def venn(args):
 
 
 def haplomerge(args):
+    args.keepmerged = False
     merged = default_merge(args, args.variants)
-    utils.merge_split_called_haplotypes(merged)
+    utils.merge_split_called_haplotypes(merged, output=args.output)
 
 
 if __name__ == '__main__':

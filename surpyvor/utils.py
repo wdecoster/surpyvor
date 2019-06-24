@@ -167,49 +167,49 @@ def confusion_matrix(vcff, names):
     print(df)
 
 
-def merge_split_called_haplotypes(merged):
+def merge_split_called_haplotypes(merged, output):
+    _, name = tempfile.mkstemp(suffix='.vcf')
     vcf = VCF(merged)
-    write_header(vcf)
 
-    for v in vcf:
-        info = {'SVLEN': v.INFO.get('AVGLEN'), 'END': v.end, 'SVTYPE': v.INFO.get('SVTYPE')}
-        print("{chrom}\t{pos}\t{idf}\t{ref}\t{alt}\t{qual}\t{filt}\t{info}\t{form}\t{sam}".format(
-            chrom=v.CHROM,
-            pos=v.start,
-            idf=v.ID,
-            ref=v.REF,
-            alt=','.join(v.ALT),
-            qual=v.QUAL or '.',
-            filt='.',
-            info=';'.join(['{}={}'.format(k, v) for k, v in info.items()]),
-            form='GT',
-            sam=get_genotype(v.gt_types)
-        ))
+    with open(name, 'a') as output:
+        output.write("{}\n".format('\n'.join(make_header(vcf))))
+        for v in vcf:
+            info = {'SVLEN': v.INFO.get('AVGLEN'), 'END': v.end, 'SVTYPE': v.INFO.get('SVTYPE')}
+            print("{chrom}\t{pos}\t{idf}\t{ref}\t{alt}\t{q}\t{filt}\t{info}\t{form}\t{sam}"
+                  .format(
+                      chrom=v.CHROM,
+                      pos=v.start,
+                      idf=v.ID,
+                      ref=v.REF,
+                      alt=','.join(v.ALT),
+                      q=v.QUAL or '.',
+                      filt='.',
+                      info=';'.join(['{}={}'.format(k, v) for k, v in info.items()]),
+                      form='GT',
+                      sam=get_genotype(v.gt_types)),
+                  file=output)
+    vcf_sort(name, output)
 
 
 def get_genotype(alleles):
-    alternative_alleles = sum([is_variant(c) for c in alleles])
-    if alternative_alleles == 1:
-        return '0/1'
-    elif alternative_alleles == 2:
-        return '1/1'
-    else:
-        return '0/0'
+    hap1, hap2 = [int(is_variant(c)) for c in alleles]
+    return '{}|{}'.format(hap1, hap2)
 
 
-def write_header(vcf):
-    print('##fileformat=VCFv4.1')
-    print('##source=surpyvor haplomerge')
+def make_header(vcf):
+    header = ['##fileformat=VCFv4.1', '##source=surpyvor haplomerge']
     for line in vcf.header_iter():
         if line["HeaderType"] == 'CONTIG':
-            print('##contig=<ID={}>)'.format(line['ID']))
-    print('##ALT=<ID=DEL,Description="Deletion">')
-    print('##ALT=<ID=DUP,Description="Duplication">')
-    print('##ALT=<ID=INV,Description="Inversion">')
-    print('##ALT=<ID=BND,Description="Translocation">')
-    print('##ALT=<ID=INS,Description="Insertion">')
-    print('##INFO=<ID=END,Number=1,Type=Integer,Description="End of the structural variant">')
-    print('##INFO=<ID=SVLEN,Number=1,Type=Float,Description="Length of the SV">')
-    print('##INFO=<ID=SVTYPE,Number=1,Type=String,Description="Type of the SV.">')
-    print('##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">')
-    print('#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE')
+            header.append('##contig=<ID={}>'.format(line['ID']))
+    header.extend([
+        '##ALT=<ID=DEL,Description="Deletion">',
+        '##ALT=<ID=DUP,Description="Duplication">',
+        '##ALT=<ID=INV,Description="Inversion">',
+        '##ALT=<ID=BND,Description="Translocation">',
+        '##ALT=<ID=INS,Description="Insertion">',
+        '##INFO=<ID=END,Number=1,Type=Integer,Description="End of the structural variant">',
+        '##INFO=<ID=SVLEN,Number=1,Type=Float,Description="Length of the SV">',
+        '##INFO=<ID=SVTYPE,Number=1,Type=String,Description="Type of the SV.">',
+        '##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">',
+        '#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE'])
+    return header

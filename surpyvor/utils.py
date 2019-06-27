@@ -171,8 +171,8 @@ def merge_split_called_haplotypes(merged, output):
     _, name = tempfile.mkstemp(suffix='.vcf')
     vcf = VCF(merged)
 
-    with open(name, 'a') as output:
-        output.write("{}\n".format('\n'.join(make_header(vcf))))
+    with open(name, 'a') as tmpoutput:
+        tmpoutput.write("{}\n".format('\n'.join(make_header(vcf))))
         for v in vcf:
             info = {'SVLEN': v.INFO.get('AVGLEN'), 'END': v.end, 'SVTYPE': v.INFO.get('SVTYPE')}
             print("{chrom}\t{pos}\t{idf}\t{ref}\t{alt}\t{q}\t{filt}\t{info}\t{form}\t{sam}"
@@ -187,7 +187,7 @@ def merge_split_called_haplotypes(merged, output):
                       info=';'.join(['{}={}'.format(k, v) for k, v in info.items()]),
                       form='GT',
                       sam=get_genotype(v.gt_types)),
-                  file=output)
+                  file=tmpoutput)
     vcf_sort(name, output)
 
 

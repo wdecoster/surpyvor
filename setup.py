@@ -30,7 +30,7 @@ setup(
     keywords='nanopore',
     packages=find_packages(),
     python_requires='>=3',
-    install_requires=[],
+    install_requires=['matplotlib', 'matplotlib-venn', 'cyvcf2', 'numpy', 'UpSetPlot'],
     package_data={'surpyvor': []},
     package_dir={'surpyvor': 'surpyvor'},
     include_package_data=True,

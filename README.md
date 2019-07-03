@@ -13,6 +13,7 @@ Required python modules are cyvcf2, matplotlib, numpy, matplotlib-venn and upset
     highconf            get intersection of SV vcfs
     prf                 calculate precision, recall and F-measure
     upset               Make upset plot for multiple SV vcf files
+    venn                Make venn diagram for multiple SV vcf files
 
 Each sub-command has its own help information, accessible by running `surpyvor <command> -h/--help`
 

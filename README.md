@@ -5,7 +5,9 @@ A python wrapper around [SURVIVOR](https://github.com/fritzsedlazeck/SURVIVOR), 
 surpyvor requires bcftools, bgzip, tabix and SURVIVOR to be installed and in the $PATH.
 Required python modules are cyvcf2, matplotlib, numpy, matplotlib-venn and upsetplot
 
+surpyvor and its dependencies can be installed from [bioconda](https://anaconda.org/bioconda/surpyvor):
 
+`conda install -c bioconda surpyvor`
 
 ## sub-commands:
     merge               merging vcf files of SVs

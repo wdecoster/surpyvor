@@ -174,7 +174,7 @@ def merge_split_called_haplotypes(merged, output):
     with open(name, 'a') as tmpoutput:
         tmpoutput.write("{}\n".format('\n'.join(make_header(vcf))))
         for v in vcf:
-            info = {'SVLEN': v.INFO.get('AVGLEN'), 'END': v.end, 'SVTYPE': v.INFO.get('SVTYPE')}
+            info = {'SVLEN': v.INFO.get('SVLEN'), 'END': v.end, 'SVTYPE': v.INFO.get('SVTYPE')}
             print("{chrom}\t{pos}\t{idf}\t{ref}\t{alt}\t{q}\t{filt}\t{info}\t{form}\t{sam}"
                   .format(
                       chrom=v.CHROM,

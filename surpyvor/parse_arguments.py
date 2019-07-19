@@ -114,6 +114,9 @@ def get_args():
     prf_opt.add_argument("--matrix",
                          help="Make a confusion matrix.",
                          action="store_true")
+    prf_opt.add_argument("--venn",
+                         help="Make a venn diagram.",
+                         action="store_true")
 
     venn = subparsers.add_parser('venn',
                                  help="Make venn diagram for 2 or 3 SV vcf files",

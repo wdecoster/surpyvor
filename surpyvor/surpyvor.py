@@ -98,7 +98,7 @@ def precision_recall_fmeasure(args):
     vcf_out = default_merge(args, variants=[args.truth, args.test])
     truth_set, test_set = utils.get_variant_identifiers(vcf=vcf_out,
                                                         ignore_chroms=args.ignore_chroms)
-    plots.venn_diagram((truth_set, test_set), labels=('Truth', 'Test'))
+
     tp = len(truth_set & test_set)
     precision = tp / len(test_set)
     print(f"Precision: {round(precision, ndigits=4)}")
@@ -106,6 +106,9 @@ def precision_recall_fmeasure(args):
     print(f"Recall: {round(recall, ndigits=4)}")
     fmeasure = 2 * (precision * recall) / (precision + recall)
     print(f"F-measure: {round(fmeasure, ndigits=4)}")
+
+    if args.venn:
+        plots.venn_diagram((truth_set, test_set), labels=('Truth', 'Test'))
     if args.bar:
         plots.bar_chart(vcf_out)
     if args.matrix:

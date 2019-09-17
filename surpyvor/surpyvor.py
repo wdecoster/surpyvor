@@ -42,6 +42,8 @@ def main():
         upset(args)
     elif args.command == 'venn':
         venn(args)
+    elif args.command == 'lengthplot':
+        lengthplot(args)
 
 
 def sv_merge(samples, distance, callers, require_type, require_strand,
@@ -131,6 +133,17 @@ def venn(args):
                        labels=args.names or args.variants,
                        num_samples=len(args.variants),
                        outname=args.plotout)
+
+
+def lengthplot(args):
+    len_dict = utils.get_svlengths(args.vcf)
+    with open(args.counts, 'w') as counts:
+        counts.write("Number of nucleotides affected by SV:\n")
+        for svtype, lengths in len_dict.items():
+            counts.write("{}:\t{} variants\t{}bp\n".format(
+                svtype, len(lengths), sum(lengths)))
+    plots.length_plot(dict_of_lengths=len_dict,
+                      output=args.output)
 
 
 if __name__ == '__main__':

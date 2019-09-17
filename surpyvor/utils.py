@@ -165,3 +165,40 @@ def confusion_matrix(vcff, names):
     df.index = ['nocall', 'hom_ref', 'het', 'hom_alt']
     df.index.name = names[0]
     print(df)
+
+
+def get_svlengths(vcf):
+    len_dict = defaultdict(list)
+    vcf = VCF(vcf)
+    if len(vcf.samples) > 1:
+        sys.stderr.write("\n\nWarning: this script does not support multiple samples in a vcf.\n")
+        sys.stderr.write("Plotting and counting only for {}.".format(vcf.samples[0]))
+    for v in vcf:
+        if is_variant(v.gt_types[0]) and not v.INFO.get('SVTYPE') == 'TRA':
+            try:
+                if get_svlen(v) >= 50:
+                    len_dict[get_svtype(v)].append(get_svlen(v))
+            except TypeError:
+                if v.INFO.get('SVTYPE') == 'INV':
+                    if (v.end - v.start) >= 50:
+                        len_dict[get_svtype(v)].append(v.end - v.start)
+                elif v.INFO.get('SVTYPE') == 'BND':
+                    try:
+                        len_dict['BND'].append(abs(v.INFO.get('MATEDIST')))
+                    except TypeError:
+                        len_dict['BND'].append(0)
+                else:
+                    sys.stderr.write("Exception when parsing variant:\n{}\n\n".format(v))
+                    len_dict["parse_error"].append(0)
+    return len_dict
+
+
+def get_svtype(v):
+    if v.INFO.get('SVTYPE') == "INVDUP":
+        return "INV"
+    else:
+        return v.INFO.get('SVTYPE').split(':')[0].split('/')[0]
+
+
+def get_svlen(v):
+    return abs(v.INFO.get('SVLEN'))

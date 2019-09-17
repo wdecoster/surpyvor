@@ -173,6 +173,19 @@ def get_args():
     upset_opt.add_argument("--plotout",
                            help="Name of output plot",
                            default="UpSetPlot.png")
+
+    lengthplot = subparsers.add_parser('lengthplot',
+                                       help="create stacked bar plot of SV lengths split by type",
+                                       formatter_class=ArgumentDefaultsHelpFormatter)
+    lengthplot_req = lengthplot.add_argument_group('required arguments')
+    lengthplot_req.add_argument("vcf", help="vcf file to parse")
+    lengthplot_opt = lengthplot.add_argument_group('optional arguments')
+    lengthplot_opt.add_argument("-o", "--output",
+                                help="output file to write figure to",
+                                default="SV-length.png")
+    lengthplot_opt.add_argument("-c", "--counts",
+                                help="output file to write counts to",
+                                default="SV-length.txt")
     args = parser.parse_args()
     validate_args(parser, args)
     return args

@@ -143,7 +143,7 @@ def lengthplot(args):
             counts.write("{}:\t{} variants\t{}bp\n".format(
                 svtype, len(lengths), sum(lengths)))
     plots.length_plot(dict_of_lengths=len_dict,
-                      output=args.output)
+                      output=args.plotout)
 
 
 if __name__ == '__main__':

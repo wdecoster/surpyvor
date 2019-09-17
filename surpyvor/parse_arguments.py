@@ -180,7 +180,7 @@ def get_args():
     lengthplot_req = lengthplot.add_argument_group('required arguments')
     lengthplot_req.add_argument("vcf", help="vcf file to parse")
     lengthplot_opt = lengthplot.add_argument_group('optional arguments')
-    lengthplot_opt.add_argument("-o", "--output",
+    lengthplot_opt.add_argument("--plotout",
                                 help="output file to write figure to",
                                 default="SV-length.png")
     lengthplot_opt.add_argument("-c", "--counts",

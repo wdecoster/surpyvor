@@ -186,6 +186,19 @@ def get_args():
     lengthplot_opt.add_argument("-c", "--counts",
                                 help="output file to write counts to",
                                 default="SV-length.txt")
+
+    minlength = subparsers.add_parser('minlen',
+                                      help="filter a SV vcf file by minimal variant length",
+                                      formatter_class=ArgumentDefaultsHelpFormatter)
+    minlength_req = minlength.add_argument_group('required arguments')
+    minlength_req.add_argument("vcf", help="vcf file to parse")
+
+    minlength_opt = minlength.add_argument_group('optional arguments')
+    minlength_opt.add_argument("-l", "--length",
+                               help="output file to write figure to",
+                               type=int,
+                               default=50)
+    minlength_opt.add_argument("-o", "--output", help="vcf file to write to", default=None)
     args = parser.parse_args()
     validate_args(parser, args)
     return args

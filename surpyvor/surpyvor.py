@@ -44,6 +44,8 @@ def main():
         venn(args)
     elif args.command == 'lengthplot':
         lengthplot(args)
+    elif args.command == 'minlen':
+        minlen(args)
 
 
 def sv_merge(samples, distance, callers, require_type, require_strand,
@@ -144,6 +146,10 @@ def lengthplot(args):
                 svtype, len(lengths), sum(lengths)))
     plots.length_plot(dict_of_lengths=len_dict,
                       output=args.plotout)
+
+
+def minlen(args):
+    utils.filter_vcf(args.vcf, output=args.output, minlength=args.length)
 
 
 if __name__ == '__main__':

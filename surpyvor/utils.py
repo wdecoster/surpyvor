@@ -2,7 +2,7 @@ import os
 import sys
 from shutil import which
 import tempfile
-from cyvcf2 import VCF
+from cyvcf2 import VCF, Writer
 import subprocess
 import shlex
 import pandas as pd
@@ -202,3 +202,13 @@ def get_svtype(v):
 
 def get_svlen(v):
     return abs(v.INFO.get('SVLEN'))
+
+
+def filter_vcf(vcf, output, minlength):
+    vcf_in = VCF(vcf)
+    if not output:
+        output = vcf.replace(".vcf", "_filtered.vcf")
+    vcf_out = Writer(output, vcf_in)
+    for v in vcf_in:
+        if get_svlen(v) > minlength:
+            vcf_out.write_record(v)

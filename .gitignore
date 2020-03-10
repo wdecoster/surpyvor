@@ -1,3 +1,4 @@
 .remote-sync.json
 dist/
 surpyvor.egg-info/
+surpyvor/__pycache__/

@@ -13,7 +13,9 @@ def get_args():
                         version='surpyvor: {}, SURVIVOR {}'.format(
                             __version__, get_survivor_version()),
                         help="Print version and quit.")
-
+    parser.add_argument("--verbose",
+                        help="Print out more information while running.",
+                        action='store_true')
     subparsers = parser.add_subparsers(dest='command',
                                        title='[sub-commands]')
 

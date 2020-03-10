@@ -17,7 +17,8 @@ def main():
                  require_strand=args.strand,
                  estimate_distance=args.estimate_distance,
                  minlength=args.minlength,
-                 output=args.output)
+                 output=args.output,
+                 verbose=args.verbose)
     elif args.command == "highsens":
         sv_merge(samples=[utils.vcf_concat(args.variants)],
                  distance=100,
@@ -26,7 +27,8 @@ def main():
                  require_strand=False,
                  estimate_distance=False,
                  minlength=50,
-                 output=args.output)
+                 output=args.output,
+                 verbose=args.verbose)
     elif args.command == "highconf":
         sv_merge(samples=args.variants,
                  distance=500,
@@ -35,7 +37,8 @@ def main():
                  require_strand=False,
                  estimate_distance=False,
                  minlength=50,
-                 output=args.output)
+                 output=args.output,
+                 verbose=args.verbose)
     elif args.command == 'prf':
         precision_recall_fmeasure(args)
     elif args.command == 'upset':
@@ -49,7 +52,7 @@ def main():
 
 
 def sv_merge(samples, distance, callers, require_type, require_strand,
-             estimate_distance, minlength, output):
+             estimate_distance, minlength, output, verbose=False):
     """
     Executes SURVIVOR merge, with parameters:
     -samples.fofn (samples, list)
@@ -74,6 +77,9 @@ def sv_merge(samples, distance, callers, require_type, require_strand,
         estm=1 if estimate_distance else -1,
         ml=minlength,
         out=interm_out)
+    if verbose:
+        print("Executing:", file=sys.stderr)
+        print(survivor_cmd, file=sys.stderr)
     print("Executing SURVIVOR...", end="", flush=True, file=sys.stderr)
     subprocess.call(shlex.split(survivor_cmd), stdout=subprocess.DEVNULL)
     print("DONE", file=sys.stderr)
@@ -94,7 +100,8 @@ def default_merge(args, variants):
              require_strand=False,
              estimate_distance=False,
              minlength=args.minlength,
-             output=vcf_out)
+             output=vcf_out,
+             verbose=args.verbose)
     return vcf_out
 
 

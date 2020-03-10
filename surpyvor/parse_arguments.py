@@ -13,15 +13,15 @@ def get_args():
                         version='surpyvor: {}, SURVIVOR {}'.format(
                             __version__, get_survivor_version()),
                         help="Print version and quit.")
-    parser.add_argument("--verbose",
-                        help="Print out more information while running.",
-                        action='store_true')
+    parent_parser = ArgumentParser(add_help=False)
+    parent_parser.add_argument("--verbose",
+                               help="Print out more information while running.",
+                               action='store_true')
     subparsers = parser.add_subparsers(dest='command',
                                        title='[sub-commands]')
-
     merge = subparsers.add_parser("merge",
                                   help="merging vcf files of SVs",
-                                  formatter_class=ArgumentDefaultsHelpFormatter)
+                                  parents=[parent_parser])
     merge_req = merge.add_argument_group('required arguments')
     merge_req.add_argument("--variants",
                            nargs='+',
@@ -58,7 +58,7 @@ def get_args():
 
     highsens = subparsers.add_parser("highsens",
                                      help="get union of SV vcfs",
-                                     formatter_class=ArgumentDefaultsHelpFormatter)
+                                     parents=[parent_parser])
     highsens_req = highsens.add_argument_group('required arguments')
     highsens_req.add_argument("--variants",
                               nargs='+',
@@ -71,7 +71,7 @@ def get_args():
 
     highconf = subparsers.add_parser("highconf",
                                      help="get intersection of SV vcfs",
-                                     formatter_class=ArgumentDefaultsHelpFormatter)
+                                     parents=[parent_parser])
     highconf_req = highconf.add_argument_group('required arguments')
     highconf_req.add_argument("--variants",
                               nargs='+',
@@ -84,7 +84,7 @@ def get_args():
 
     prf = subparsers.add_parser('prf',
                                 help="calculate precision, recall and F-measure",
-                                formatter_class=ArgumentDefaultsHelpFormatter)
+                                parents=[parent_parser])
     prf_req = prf.add_argument_group('required arguments')
     prf_req.add_argument("--truth",
                          help="vcf containing truth set",
@@ -122,7 +122,7 @@ def get_args():
 
     venn = subparsers.add_parser('venn',
                                  help="Make venn diagram for 2 or 3 SV vcf files",
-                                 formatter_class=ArgumentDefaultsHelpFormatter)
+                                 parents=[parent_parser])
     venn_req = venn.add_argument_group('required arguments')
     venn_req.add_argument("--variants",
                           help="vcfs containing structural variants",
@@ -150,7 +150,7 @@ def get_args():
 
     upset = subparsers.add_parser('upset',
                                   help="Make upset plot for multiple SV vcf files",
-                                  formatter_class=ArgumentDefaultsHelpFormatter)
+                                  parents=[parent_parser])
     upset_req = upset.add_argument_group('required arguments')
     upset_req.add_argument("--variants",
                            help="vcfs containing structural variants",
@@ -178,7 +178,7 @@ def get_args():
 
     lengthplot = subparsers.add_parser('lengthplot',
                                        help="create stacked bar plot of SV lengths split by type",
-                                       formatter_class=ArgumentDefaultsHelpFormatter)
+                                       parents=[parent_parser])
     lengthplot_req = lengthplot.add_argument_group('required arguments')
     lengthplot_req.add_argument("vcf", help="vcf file to parse")
     lengthplot_opt = lengthplot.add_argument_group('optional arguments')
@@ -191,7 +191,7 @@ def get_args():
 
     minlength = subparsers.add_parser('minlen',
                                       help="filter a SV vcf file by minimal variant length",
-                                      formatter_class=ArgumentDefaultsHelpFormatter)
+                                      parents=[parent_parser])
     minlength_req = minlength.add_argument_group('required arguments')
     minlength_req.add_argument("vcf", help="vcf file to parse")
 

@@ -78,11 +78,13 @@ def sv_merge(samples, distance, callers, require_type, require_strand,
         ml=minlength,
         out=interm_out)
     if verbose:
-        print("Executing:", file=sys.stderr)
+        print("\n\nExecuting:", file=sys.stderr)
         print(survivor_cmd, file=sys.stderr)
     print("Executing SURVIVOR...", end="", flush=True, file=sys.stderr)
     subprocess.call(shlex.split(survivor_cmd), stdout=subprocess.DEVNULL)
     print("DONE", file=sys.stderr)
+    if verbose:
+        print("\n\nSorting merged vcf file:", file=sys.stderr)
     utils.vcf_sort(interm_out, output)
     os.close(fhf)
     os.close(fhs)

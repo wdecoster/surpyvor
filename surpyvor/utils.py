@@ -1,13 +1,10 @@
 import os
 import sys
-from shutil import which
 import tempfile
 from cyvcf2 import VCF
 import subprocess
 import shlex
 import pandas as pd
-import gzip
-from collections import defaultdict
 
 
 def is_variant(call):
@@ -22,6 +19,8 @@ def is_variant(call):
 
 def normalize_vcf(vcff):
     """Normalize a vcf by changing DUP to INS"""
+    import gzip
+
     handle, name = tempfile.mkstemp(suffix='.vcf')
     out = open(name, 'w')
     if vcff.endswith('.gz'):
@@ -70,6 +69,7 @@ def make_sets(vcf, names):
     """From the merged SV file, return pd.Series of overlapping sets.
 
     Intended for making an upset plot"""
+    from collections import defaultdict
     calls = defaultdict(int)
     for v in VCF(vcf):
         calls[gt_types_to_binary_comparison(v.gt_types)] += 1
@@ -127,6 +127,8 @@ def decompress(vcf):
 
 
 def test_dependencies():
+    from shutil import which
+
     for dependency in ['bcftools', 'bgzip', 'tabix', 'SURVIVOR']:
         if not which(dependency):
             sys.exit("ERROR: Could not find required executable '{}'.\n"
@@ -165,51 +167,3 @@ def confusion_matrix(vcff, names):
     df.index = ['nocall', 'hom_ref', 'het', 'hom_alt']
     df.index.name = names[0]
     print(df)
-
-
-def merge_split_called_haplotypes(merged, output):
-    _, name = tempfile.mkstemp(suffix='.vcf')
-    vcf = VCF(merged)
-
-    with open(name, 'a') as tmpoutput:
-        tmpoutput.write("{}\n".format('\n'.join(make_header(vcf))))
-        for v in vcf:
-            info = {'SVLEN': v.INFO.get('SVLEN'), 'END': v.end, 'SVTYPE': v.INFO.get('SVTYPE')}
-            print("{chrom}\t{pos}\t{idf}\t{ref}\t{alt}\t{q}\t{filt}\t{info}\t{form}\t{sam}"
-                  .format(
-                      chrom=v.CHROM,
-                      pos=v.start,
-                      idf=v.ID,
-                      ref=v.REF,
-                      alt=','.join(v.ALT),
-                      q=v.QUAL or '.',
-                      filt='.',
-                      info=';'.join(['{}={}'.format(k, v) for k, v in info.items()]),
-                      form='GT',
-                      sam=get_genotype(v.gt_types)),
-                  file=tmpoutput)
-    vcf_sort(name, output)
-
-
-def get_genotype(alleles):
-    hap1, hap2 = [int(is_variant(c)) for c in alleles]
-    return '{}|{}'.format(hap1, hap2)
-
-
-def make_header(vcf):
-    header = ['##fileformat=VCFv4.1', '##source=surpyvor haplomerge']
-    for line in vcf.header_iter():
-        if line["HeaderType"] == 'CONTIG':
-            header.append('##contig=<ID={}>'.format(line['ID']))
-    header.extend([
-        '##ALT=<ID=DEL,Description="Deletion">',
-        '##ALT=<ID=DUP,Description="Duplication">',
-        '##ALT=<ID=INV,Description="Inversion">',
-        '##ALT=<ID=BND,Description="Translocation">',
-        '##ALT=<ID=INS,Description="Insertion">',
-        '##INFO=<ID=END,Number=1,Type=Integer,Description="End of the structural variant">',
-        '##INFO=<ID=SVLEN,Number=1,Type=Float,Description="Length of the SV">',
-        '##INFO=<ID=SVTYPE,Number=1,Type=String,Description="Type of the SV.">',
-        '##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">',
-        '#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE'])
-    return header

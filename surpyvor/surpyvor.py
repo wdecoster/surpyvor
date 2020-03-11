@@ -1,9 +1,6 @@
 from surpyvor import plots, utils, parse_arguments
-import subprocess
 import tempfile
 import sys
-import shlex
-import os
 
 
 def main():
@@ -58,6 +55,10 @@ def sv_merge(samples, distance, callers, require_type, require_strand,
     -estimate distance between calls (estimate_distance, boolean)
     -specify minimal size of SV event (minlength, int)
     """
+    import subprocess
+    import shlex
+    import os
+
     fhf, fofn_f = tempfile.mkstemp()
     fhs, interm_out = tempfile.mkstemp(suffix=".vcf")
     with open(fofn_f, 'w') as fofn:
@@ -133,9 +134,11 @@ def venn(args):
 
 
 def haplomerge(args):
+    from surpyvor import haplomerge as hm
+
     args.keepmerged = False
     merged = default_merge(args, args.variants)
-    utils.merge_split_called_haplotypes(merged, output=args.output)
+    hm.merge_split_called_haplotypes(merged, output=args.output)
 
 
 if __name__ == '__main__':

@@ -1,6 +1,5 @@
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from .version import __version__
-import subprocess
 import sys
 from os import path
 
@@ -239,6 +238,8 @@ def validate_args(parser, args):
 
 
 def get_survivor_version():
+    import subprocess
+
     for line in subprocess.check_output(args="SURVIVOR",
                                         stderr=subprocess.STDOUT,
                                         universal_newlines=True).split('\n'):

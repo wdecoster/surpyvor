@@ -3,12 +3,12 @@ from cyvcf2 import VCF
 from surpyvor import utils
 
 
-def merge_split_called_haplotypes(merged, output):
+def merge_split_called_haplotypes(merged, output, name=None):
     _, name = tempfile.mkstemp(suffix='.vcf')
     vcf = VCF(merged)
 
     with open(name, 'a') as tmpoutput:
-        tmpoutput.write("{}\n".format('\n'.join(make_header(vcf))))
+        tmpoutput.write("{}\n".format('\n'.join(make_header(vcf, name=name))))
         for v in vcf:
             info = {'SVLEN': v.INFO.get('SVLEN'), 'END': v.end, 'SVTYPE': v.INFO.get('SVTYPE')}
             print("{chrom}\t{pos}\t{idf}\t{ref}\t{alt}\t{q}\t{filt}\t{info}\t{form}\t{sam}"
@@ -46,6 +46,7 @@ def make_header(vcf):
         '##INFO=<ID=END,Number=1,Type=Integer,Description="End of the structural variant">',
         '##INFO=<ID=SVLEN,Number=1,Type=Float,Description="Length of the SV">',
         '##INFO=<ID=SVTYPE,Number=1,Type=String,Description="Type of the SV.">',
+        '##INFO=<ID=HAPSUPPORT,Number=1,Type=String,Description="Support per haplotype.">',
         '##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">',
-        '#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE'])
+        '#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t{}'.format(name)])
     return header

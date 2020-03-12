@@ -138,7 +138,7 @@ def haplomerge(args):
 
     args.keepmerged = False
     merged = default_merge(args, args.variants)
-    hm.merge_split_called_haplotypes(merged, output=args.output)
+    hm.merge_split_called_haplotypes(merged, output=args.output, name=args.name)
 
 
 if __name__ == '__main__':

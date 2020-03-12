@@ -182,6 +182,9 @@ def get_args():
     haplomerge_opt.add_argument("-o", "--output",
                                 help="output file",
                                 default="stdout")
+    haplomerge_opt.add_argument("-n", "--name",
+                                help="name of sample in output VCF",
+                                default="stdout")
     haplomerge_opt.add_argument("-d", "--distance",
                                 type=int,
                                 default=200,

@@ -176,7 +176,7 @@ def get_args():
     haplomerge_req = haplomerge.add_argument_group('required arguments')
     haplomerge_req.add_argument("--variants",
                                 required=True,
-                                nargs=2,
+                                nargs="*",
                                 help="vcf files to merge")
     haplomerge_opt = haplomerge.add_argument_group('optional arguments')
     haplomerge_opt.add_argument("-o", "--output",
@@ -228,6 +228,10 @@ def validate_args(parser, args):
         if len(args.variants) > 3:
             sys.exit("INPUT ERROR: "
                      "Venn diagrams are only created for 2 or 3 vcf files!")
+    if args.command == 'haplomerge':
+        if not len(args.variants) in [2, 3]:
+            sys.exit("INPUT ERROR: "
+                     "haplomerge can only be used on 2 or 3 vcf files!")
     if hasattr(args, 'variants'):
         for f in args.variants:
             if not path.isfile(f):

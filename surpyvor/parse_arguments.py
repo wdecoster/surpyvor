@@ -1,6 +1,5 @@
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from .version import __version__
-import subprocess
 import sys
 from os import path
 
@@ -176,6 +175,46 @@ def get_args():
                            help="Name of output plot",
                            default="UpSetPlot.png")
 
+    haplomerge = subparsers.add_parser("haplomerge",
+                                       help="merging vcf files of SVs from two haplotypes",
+                                       formatter_class=ArgumentDefaultsHelpFormatter)
+    haplomerge_req = haplomerge.add_argument_group('required arguments')
+    haplomerge_req.add_argument("--variants",
+                                required=True,
+                                nargs="*",
+                                help="vcf files to merge")
+    haplomerge_opt = haplomerge.add_argument_group('optional arguments')
+    haplomerge_opt.add_argument("-o", "--output",
+                                help="output file",
+                                default="stdout")
+    haplomerge_opt.add_argument("-n", "--name",
+                                help="name of sample in output VCF",
+                                default="stdout")
+    haplomerge_opt.add_argument("-d", "--distance",
+                                type=int,
+                                default=200,
+                                help="distance between variants to merge")
+    haplomerge_opt.add_argument("-l", "--minlength",
+                                type=int,
+                                default=50,
+                                help="Minimum length of variants to consider")
+    haplomerge_opt.add_argument("-c", "--callers",
+                                type=int,
+                                default=1,
+                                help="Minimum number of callers to support a variant")
+    haplomerge_opt.add_argument("-i", "--ignore_type",
+                                help="Ignore the type of the structural variant",
+                                action="store_true",
+                                default=False)
+    haplomerge_opt.add_argument("-s", "--strand",
+                                action="store_true",
+                                default=False,
+                                help="Take strand into account")
+    haplomerge_opt.add_argument("-e", "--estimate_distance",
+                                action="store_true",
+                                default=False,
+                                help="Estimate distance between calls")
+
     lengthplot = subparsers.add_parser('lengthplot',
                                        help="create stacked bar plot of SV lengths split by type",
                                        parents=[parent_parser])
@@ -201,6 +240,7 @@ def get_args():
                                type=int,
                                default=50)
     minlength_opt.add_argument("-o", "--output", help="vcf file to write to", default=None)
+
     args = parser.parse_args()
     validate_args(parser, args)
     return args
@@ -220,6 +260,10 @@ def validate_args(parser, args):
         if len(args.variants) > 3:
             sys.exit("INPUT ERROR: "
                      "Venn diagrams are only created for 2 or 3 vcf files!")
+    if args.command == 'haplomerge':
+        if not len(args.variants) in [2, 3]:
+            sys.exit("INPUT ERROR: "
+                     "haplomerge can only be used on 2 or 3 vcf files!")
     if hasattr(args, 'variants'):
         for f in args.variants:
             if not path.isfile(f):
@@ -233,6 +277,8 @@ def validate_args(parser, args):
 
 
 def get_survivor_version():
+    import subprocess
+
     for line in subprocess.check_output(args="SURVIVOR",
                                         stderr=subprocess.STDOUT,
                                         universal_newlines=True).split('\n'):

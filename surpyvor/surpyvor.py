@@ -1,9 +1,6 @@
 from surpyvor import plots, utils, parse_arguments
-import subprocess
 import tempfile
 import sys
-import shlex
-import os
 
 
 def main():
@@ -45,6 +42,8 @@ def main():
         upset(args)
     elif args.command == 'venn':
         venn(args)
+    elif args.command == 'haplomerge':
+        haplomerge(args)
     elif args.command == 'lengthplot':
         lengthplot(args)
     elif args.command == 'minlen':
@@ -63,6 +62,10 @@ def sv_merge(samples, distance, callers, require_type, require_strand,
     -estimate distance between calls (estimate_distance, boolean)
     -specify minimal size of SV event (minlength, int)
     """
+    import subprocess
+    import shlex
+    import os
+
     fhf, fofn_f = tempfile.mkstemp()
     fhs, interm_out = tempfile.mkstemp(suffix=".vcf")
     with open(fofn_f, 'w') as fofn:
@@ -146,6 +149,13 @@ def venn(args):
                        outname=args.plotout)
 
 
+def haplomerge(args):
+    from surpyvor import haplomerge as hm
+
+    args.keepmerged = False
+    merged = default_merge(args, args.variants)
+    hm.merge_split_called_haplotypes(merged, output=args.output, name=args.name)
+
 def lengthplot(args):
     len_dict = utils.get_svlengths(args.vcf)
     with open(args.counts, 'w') as counts:
@@ -159,6 +169,7 @@ def lengthplot(args):
 
 def minlen(args):
     utils.filter_vcf(args.vcf, output=args.output, minlength=args.length)
+
 
 
 if __name__ == '__main__':

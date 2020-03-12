@@ -1,7 +1,4 @@
-from cyvcf2 import VCF
 import matplotlib.pyplot as plt
-from surpyvor import utils
-import numpy as np
 
 
 def bar_chart(vcf, outname="stacked_bar.png"):
@@ -9,6 +6,10 @@ def bar_chart(vcf, outname="stacked_bar.png"):
     Make a stacked bar chart for length of the SV split by validation status
     This ignores zygosity.
     """
+    from cyvcf2 import VCF
+    from surpyvor import utils
+    import numpy as np
+
     len_dict = {"True": [], "False": [], "Missed": []}
     for v in VCF(vcf):
         if not v.INFO.get('SVTYPE') == 'TRA' and abs(v.INFO.get('SVLEN')) >= 50:
@@ -54,9 +55,9 @@ def upset_plot(upsets, outname="UpSetPlot.png"):
 def venn_diagram(sets, labels, num_samples=2, outname="venn.png"):
     from matplotlib_venn import venn2, venn3
     if num_samples == 2:
-        venn = venn2
+        from matplotlib_venn import venn2 as venn
     else:
-        venn = venn3
+        from matplotlib_venn import venn3 as venn
     venn(sets, set_labels=labels)
     plt.savefig(outname)
     plt.close()

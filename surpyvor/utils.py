@@ -1,13 +1,10 @@
 import os
 import sys
-from shutil import which
 import tempfile
 from cyvcf2 import VCF, Writer
 import subprocess
 import shlex
 import pandas as pd
-import gzip
-from collections import defaultdict
 
 
 def is_variant(call):
@@ -22,6 +19,8 @@ def is_variant(call):
 
 def normalize_vcf(vcff):
     """Normalize a vcf by changing DUP to INS"""
+    import gzip
+
     handle, name = tempfile.mkstemp(suffix='.vcf')
     out = open(name, 'w')
     if vcff.endswith('.gz'):
@@ -70,6 +69,7 @@ def make_sets(vcf, names):
     """From the merged SV file, return pd.Series of overlapping sets.
 
     Intended for making an upset plot"""
+    from collections import defaultdict
     calls = defaultdict(int)
     for v in VCF(vcf):
         calls[gt_types_to_binary_comparison(v.gt_types)] += 1
@@ -127,6 +127,8 @@ def decompress(vcf):
 
 
 def test_dependencies():
+    from shutil import which
+
     for dependency in ['bcftools', 'bgzip', 'tabix', 'SURVIVOR']:
         if not which(dependency):
             sys.exit("ERROR: Could not find required executable '{}'.\n"

@@ -14,7 +14,8 @@ def main():
                  require_strand=args.strand,
                  estimate_distance=args.estimate_distance,
                  minlength=args.minlength,
-                 output=args.output)
+                 output=args.output,
+                 verbose=args.verbose)
     elif args.command == "highsens":
         sv_merge(samples=[utils.vcf_concat(args.variants)],
                  distance=100,
@@ -23,7 +24,8 @@ def main():
                  require_strand=False,
                  estimate_distance=False,
                  minlength=50,
-                 output=args.output)
+                 output=args.output,
+                 verbose=args.verbose)
     elif args.command == "highconf":
         sv_merge(samples=args.variants,
                  distance=500,
@@ -32,7 +34,8 @@ def main():
                  require_strand=False,
                  estimate_distance=False,
                  minlength=50,
-                 output=args.output)
+                 output=args.output,
+                 verbose=args.verbose)
     elif args.command == 'prf':
         precision_recall_fmeasure(args)
     elif args.command == 'upset':
@@ -41,10 +44,14 @@ def main():
         venn(args)
     elif args.command == 'haplomerge':
         haplomerge(args)
+    elif args.command == 'lengthplot':
+        lengthplot(args)
+    elif args.command == 'minlen':
+        minlen(args)
 
 
 def sv_merge(samples, distance, callers, require_type, require_strand,
-             estimate_distance, minlength, output):
+             estimate_distance, minlength, output, verbose=False):
     """
     Executes SURVIVOR merge, with parameters:
     -samples.fofn (samples, list)
@@ -73,9 +80,14 @@ def sv_merge(samples, distance, callers, require_type, require_strand,
         estm=1 if estimate_distance else -1,
         ml=minlength,
         out=interm_out)
+    if verbose:
+        print("\n\nExecuting:", file=sys.stderr)
+        print(survivor_cmd, file=sys.stderr)
     print("Executing SURVIVOR...", end="", flush=True, file=sys.stderr)
     subprocess.call(shlex.split(survivor_cmd), stdout=subprocess.DEVNULL)
     print("DONE", file=sys.stderr)
+    if verbose:
+        print("\n\nSorting merged vcf file:", file=sys.stderr)
     utils.vcf_sort(interm_out, output)
     os.close(fhf)
     os.close(fhs)
@@ -93,7 +105,8 @@ def default_merge(args, variants):
              require_strand=False,
              estimate_distance=False,
              minlength=args.minlength,
-             output=vcf_out)
+             output=vcf_out,
+             verbose=args.verbose)
     return vcf_out
 
 
@@ -101,7 +114,7 @@ def precision_recall_fmeasure(args):
     vcf_out = default_merge(args, variants=[args.truth, args.test])
     truth_set, test_set = utils.get_variant_identifiers(vcf=vcf_out,
                                                         ignore_chroms=args.ignore_chroms)
-    plots.venn_diagram((truth_set, test_set), labels=('Truth', 'Test'))
+
     tp = len(truth_set & test_set)
     precision = tp / len(test_set)
     print(f"Precision: {round(precision, ndigits=4)}")
@@ -109,6 +122,9 @@ def precision_recall_fmeasure(args):
     print(f"Recall: {round(recall, ndigits=4)}")
     fmeasure = 2 * (precision * recall) / (precision + recall)
     print(f"F-measure: {round(fmeasure, ndigits=4)}")
+
+    if args.venn:
+        plots.venn_diagram((truth_set, test_set), labels=('Truth', 'Test'))
     if args.bar:
         plots.bar_chart(vcf_out)
     if args.matrix:
@@ -139,6 +155,21 @@ def haplomerge(args):
     args.keepmerged = False
     merged = default_merge(args, args.variants)
     hm.merge_split_called_haplotypes(merged, output=args.output, name=args.name)
+
+def lengthplot(args):
+    len_dict = utils.get_svlengths(args.vcf)
+    with open(args.counts, 'w') as counts:
+        counts.write("Number of nucleotides affected by SV:\n")
+        for svtype, lengths in len_dict.items():
+            counts.write("{}:\t{} variants\t{}bp\n".format(
+                svtype, len(lengths), sum(lengths)))
+    plots.length_plot(dict_of_lengths=len_dict,
+                      output=args.plotout)
+
+
+def minlen(args):
+    utils.filter_vcf(args.vcf, output=args.output, minlength=args.length)
+
 
 
 if __name__ == '__main__':

@@ -252,7 +252,7 @@ def get_args():
     truncate_svlen_opt.add_argument("-l", "--length",
                                     help="maximal SVLEN, replace SVLEN by this value if larger",
                                     type=int,
-                                    default=1e6)
+                                    default=1e5)
     truncate_svlen_opt.add_argument("-o", "--output", help="vcf file to write to", default=None)
 
     args = parser.parse_args()

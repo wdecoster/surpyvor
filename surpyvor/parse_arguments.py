@@ -242,6 +242,19 @@ def get_args():
                                default=50)
     minlength_opt.add_argument("-o", "--output", help="vcf file to write to", default=None)
 
+    truncate_svlen = subparsers.add_parser('svlentruncate',
+                                           help="limit the SVLEN to a certain (positive) length",
+                                           parents=[parent_parser])
+    truncate_svlen_req = truncate_svlen.add_argument_group('required arguments')
+    truncate_svlen_req.add_argument("vcf", help="vcf file to parse")
+
+    truncate_svlen_opt = truncate_svlen.add_argument_group('optional arguments')
+    truncate_svlen_opt.add_argument("-l", "--length",
+                                    help="maximal SVLEN, replace SVLEN by this value if larger",
+                                    type=int,
+                                    default=1e6)
+    truncate_svlen_opt.add_argument("-o", "--output", help="vcf file to write to", default=None)
+
     args = parser.parse_args()
     validate_args(parser, args)
     return args

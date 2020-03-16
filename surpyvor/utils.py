@@ -206,11 +206,30 @@ def get_svlen(v):
     return abs(v.INFO.get('SVLEN'))
 
 
-def filter_vcf(vcf, output, minlength):
+def filter_vcf(vcf, output, minlength=0, truncate_svlen=float("inf"), suffix=""):
     vcf_in = VCF(vcf)
     if not output:
-        output = vcf.replace(".vcf", "_filtered.vcf")
+        output = vcf.replace(".vcf", "_{}.vcf".format(suffix))
+    vcf_in.add_info_to_header({'ID': 'TRUNCATED',
+                               'Description': "SVLEN truncated",
+                               'Type': 'Flag', 'Number': '0'})
     vcf_out = Writer(output, vcf_in)
+    records_truncated = 0
+    records_filtered = 0
     for v in vcf_in:
-        if get_svlen(v) > minlength:
+        svlen = get_svlen(v)
+        if svlen > minlength:
+            if svlen > truncate_svlen:
+                v.INFO['SVLEN'] = truncate_svlen
+                v.INFO['END'] = v.start + truncate_svlen
+                v.INFO['TRUNCATED'] = True
+                records_truncated += 1
             vcf_out.write_record(v)
+        else:
+            records_filtered += 1
+    if records_truncated != 0:
+        sys.stderr.write("Truncated {} records where SVLEN > {}\n".format(
+            records_truncated, int(truncate_svlen)))
+    if records_filtered != 0:
+        sys.stderr.write("Filtered {} records where SVLEN < {}\n".format(
+            records_filtered, int(minlength)))

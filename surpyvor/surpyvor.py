@@ -48,6 +48,8 @@ def main():
         lengthplot(args)
     elif args.command == 'minlen':
         minlen(args)
+    elif args.command == 'svlentruncate':
+        svlentruncate(args)
 
 
 def sv_merge(samples, distance, callers, require_type, require_strand,
@@ -156,6 +158,7 @@ def haplomerge(args):
     merged = default_merge(args, args.variants)
     hm.merge_split_called_haplotypes(merged, output=args.output, name=args.name)
 
+
 def lengthplot(args):
     len_dict = utils.get_svlengths(args.vcf)
     with open(args.counts, 'w') as counts:
@@ -168,8 +171,11 @@ def lengthplot(args):
 
 
 def minlen(args):
-    utils.filter_vcf(args.vcf, output=args.output, minlength=args.length)
+    utils.filter_vcf(args.vcf, output=args.output, minlength=args.length, suffix="filtered")
 
+
+def svlentruncate(args):
+    utils.filter_vcf(args.vcf, output=args.output, truncate_svlen=args.length, suffix="truncated")
 
 
 if __name__ == '__main__':

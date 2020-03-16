@@ -170,6 +170,7 @@ def confusion_matrix(vcff, names):
 
 
 def get_svlengths(vcf):
+    from collections import defaultdict
     len_dict = defaultdict(list)
     vcf = VCF(vcf)
     if len(vcf.samples) > 1:

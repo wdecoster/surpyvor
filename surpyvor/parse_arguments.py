@@ -237,7 +237,7 @@ def get_args():
 
     minlength_opt = minlength.add_argument_group('optional arguments')
     minlength_opt.add_argument("-l", "--length",
-                               help="output file to write figure to",
+                               help="minimal SV length",
                                type=int,
                                default=50)
     minlength_opt.add_argument("-o", "--output", help="vcf file to write to", default=None)

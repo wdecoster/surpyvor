@@ -177,7 +177,8 @@ def get_args():
 
     haplomerge = subparsers.add_parser("haplomerge",
                                        help="merging vcf files of SVs from two haplotypes",
-                                       formatter_class=ArgumentDefaultsHelpFormatter)
+                                       formatter_class=ArgumentDefaultsHelpFormatter,
+                                       parents=[parent_parser])
     haplomerge_req = haplomerge.add_argument_group('required arguments')
     haplomerge_req.add_argument("--variants",
                                 required=True,

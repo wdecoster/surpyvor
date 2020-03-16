@@ -221,8 +221,8 @@ def filter_vcf(vcf, output, minlength=0, truncate_svlen=float("inf"), suffix="")
         svlen = get_svlen(v)
         if svlen >= minlength:
             if svlen > truncate_svlen:
-                v.INFO['SVLEN'] = truncate_svlen
-                v.INFO['END'] = v.start + truncate_svlen
+                v.INFO['SVLEN'] = 1
+                v.INFO['END'] = v.start + 1
                 v.INFO['TRUNCATED'] = True
                 records_truncated += 1
             vcf_out.write_record(v)

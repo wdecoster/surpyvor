@@ -50,6 +50,8 @@ def main():
         minlen(args)
     elif args.command == 'svlentruncate':
         svlentruncate(args)
+    elif args.command == 'fixvcf':
+        utils.fix_vcf(args.vcf, args.output)
 
 
 def sv_merge(samples, distance, callers, require_type, require_strand,

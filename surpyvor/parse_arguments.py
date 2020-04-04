@@ -255,6 +255,15 @@ def get_args():
                                     default=1e5)
     truncate_svlen_opt.add_argument("-o", "--output", help="vcf file to write to", default=None)
 
+    fixvcf = subparsers.add_parser('fixvcf',
+                                   help="Some fixes to make compatible with e.g. vcfanno",
+                                   parents=[parent_parser])
+    fixvcf_req = fixvcf.add_argument_group('required arguments')
+    fixvcf_req.add_argument("vcf", help="vcf file to parse")
+
+    fixvcf_opt = fixvcf.add_argument_group('optional arguments')
+    fixvcf_opt.add_argument("-o", "--output", help="vcf file to write to", default=None)
+
     args = parser.parse_args()
     validate_args(parser, args)
     return args

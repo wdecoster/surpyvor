@@ -234,3 +234,21 @@ def filter_vcf(vcf, output, minlength=0, truncate_svlen=float("inf"), suffix="")
     if records_filtered != 0:
         sys.stderr.write("Filtered {} records where SVLEN < {}\n".format(
             records_filtered, int(minlength)))
+
+
+def fix_vcf(vcf, output):
+    vcf_in = VCF(vcf)
+    if not output:
+        output = vcf.replace(".vcf", "_{}.vcf".format("fixed"))
+    vcf_in.add_info_to_header({'ID': 'TRUNCATED',
+                               'Description': "SVLEN truncated",
+                               'Type': 'Flag', 'Number': '0'})
+    vcf_out = Writer(output, vcf_in)
+    records_fixed = 0
+    for v in vcf_in:
+        if v.start == -1:
+            v.set_pos(0)
+            records_fixed += 1
+        vcf_out.write_record(v)
+    if records_fixed != 0:
+        sys.stderr.write("Fixed {} records.\n".format(records_fixed))

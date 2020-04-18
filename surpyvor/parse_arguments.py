@@ -264,6 +264,17 @@ def get_args():
     fixvcf_opt = fixvcf.add_argument_group('optional arguments')
     fixvcf_opt.add_argument("-o", "--output", help="vcf file to write to", default=None)
 
+    purge2d = subparsers.add_parser('purge2d',
+                                    help="Remove accidental 2D reads from a bam file",
+                                    parents=[parent_parser])
+    purge2d_req = purge2d.add_argument_group('required arguments')
+    purge2d_req.add_argument("bam", help="bam file to filter")
+
+    purge2d_opt = purge2d.add_argument_group('optional arguments')
+    purge2d_opt.add_argument("-o", "--output",
+                             help="sam/bam file to write filtered alignments to [stdout]",
+                             default="-")
+
     args = parser.parse_args()
     validate_args(parser, args)
     return args

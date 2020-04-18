@@ -52,6 +52,8 @@ def main():
         svlentruncate(args)
     elif args.command == 'fixvcf':
         utils.fix_vcf(args.vcf, args.output)
+    elif args.command == 'purge2d':
+        purge2d(args)
 
 
 def sv_merge(samples, distance, callers, require_type, require_strand,
@@ -159,6 +161,11 @@ def haplomerge(args):
     args.keepmerged = False
     merged = default_merge(args, args.variants)
     hm.merge_split_called_haplotypes(merged, output=args.output, name=args.name)
+
+
+def purge2d(args):
+    from surpyvor import purge2d as p2d
+    p2d.process(args.bam, output=args.output)
 
 
 def lengthplot(args):

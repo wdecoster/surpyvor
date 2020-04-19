@@ -15,7 +15,7 @@ def process(bamfile, output="-", write_candidates=False):
         else:
             filtered_alignments.write(read)
     sys.stderr.write(f"Detected {len(twod)} potential artefacts "
-                     "out of {bam.mapped} alignments ({100*(len(twod))/bam.mapped}%)\n")
+                     f"out of {bam.mapped} alignments ({100*(len(twod))/bam.mapped}%)\n")
     if write_candidates:
         twod_bam = pysam.AlignmentFile("2D-candidates.bam", "wb", template=bam)
         for r in twod:

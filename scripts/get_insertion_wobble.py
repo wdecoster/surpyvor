@@ -34,9 +34,7 @@ def get_distances(chrom, position, bam, window=1000):
             if (operation == 1 and length > 25):
                 distances.append(position - (read.reference_start +
                                              Cigar(''.join(cigar_list)).reference_length()))
-                break
-            else:
-                cigar_list.append(f"{length}{cigar_dict[operation]}")
+            cigar_list.append(f"{length}{cigar_dict[operation]}")
     return distances
 
 

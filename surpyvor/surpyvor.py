@@ -18,22 +18,22 @@ def main():
                  verbose=args.verbose)
     elif args.command == "highsens":
         sv_merge(samples=[utils.vcf_concat(args.variants)],
-                 distance=100,
+                 distance=args.distance,
                  callers=1,
                  require_type=True,
                  require_strand=False,
                  estimate_distance=False,
-                 minlength=50,
+                 minlength=args.minlength,
                  output=args.output,
                  verbose=args.verbose)
     elif args.command == "highconf":
         sv_merge(samples=args.variants,
-                 distance=500,
+                 distance=args.distance,
                  callers=len(args.variants),
                  require_type=True,
                  require_strand=False,
                  estimate_distance=False,
-                 minlength=50,
+                 minlength=args.minlength,
                  output=args.output,
                  verbose=args.verbose)
     elif args.command == 'prf':

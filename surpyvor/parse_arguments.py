@@ -67,7 +67,14 @@ def get_args():
     highsens_opt.add_argument("-o", "--output",
                               help="output file",
                               default="stdout")
-
+    highsens_opt.add_argument("-d", "--distance",
+                              type=int,
+                              default=100,
+                              help="distance between variants to merge")
+    highsens_opt.add_argument("-l", "--minlength",
+                              type=int,
+                              default=50,
+                              help="Minimum length of variants to consider")
     highconf = subparsers.add_parser("highconf",
                                      help="get intersection of SV vcfs",
                                      parents=[parent_parser])
@@ -80,7 +87,14 @@ def get_args():
     highconf_opt.add_argument("-o", "--output",
                               help="output file",
                               default="stdout")
-
+    highconf_opt.add_argument("-d", "--distance",
+                              type=int,
+                              default=500,
+                              help="distance between variants to merge")
+    highconf_opt.add_argument("-l", "--minlength",
+                              type=int,
+                              default=50,
+                              help="Minimum length of variants to consider")
     prf = subparsers.add_parser('prf',
                                 help="calculate precision, recall and F-measure",
                                 parents=[parent_parser])

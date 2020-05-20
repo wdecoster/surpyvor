@@ -275,6 +275,18 @@ def get_args():
                              help="sam/bam file to write filtered alignments to [stdout]",
                              default="-")
 
+    insseq = subparsers.add_parser('insseq',
+                                   help="Get improved inserted sequences for INS",
+                                   parents=[parent_parser])
+    insseq_req = insseq.add_argument_group('required arguments')
+    insseq_req.add_argument("bam", help="alignments in bam format")
+    insseq_req.add_argument("vcf", help="variants in VCF format")
+
+    insseq_opt = insseq.add_argument_group('optional arguments')
+    insseq_opt.add_argument("-o", "--output",
+                            help="vcf file to write improved variants to [stdout]",
+                            default="-")
+
     args = parser.parse_args()
     validate_args(parser, args)
     return args

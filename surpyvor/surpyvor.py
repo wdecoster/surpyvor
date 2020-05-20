@@ -54,6 +54,8 @@ def main():
         utils.fix_vcf(args.vcf, args.output)
     elif args.command == 'purge2d':
         purge2d(args)
+    elif args.command == 'insseq':
+        insseq(args)
 
 
 def sv_merge(samples, distance, callers, require_type, require_strand,
@@ -185,6 +187,11 @@ def minlen(args):
 
 def svlentruncate(args):
     utils.filter_vcf(args.vcf, output=args.output, truncate_svlen=args.length, suffix="truncated")
+
+
+def insseq(args):
+    from surpyvor import improve_insertion_sequence
+    improve_insertion_sequence.process(args.vcf, args.bam, output=args.output)
 
 
 if __name__ == '__main__':

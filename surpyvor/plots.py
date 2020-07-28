@@ -53,7 +53,6 @@ def upset_plot(upsets, outname="UpSetPlot.png"):
 
 
 def venn_diagram(sets, labels, num_samples=2, outname="venn.png"):
-    from matplotlib_venn import venn2, venn3
     if num_samples == 2:
         from matplotlib_venn import venn2 as venn
     else:

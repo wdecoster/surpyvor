@@ -274,7 +274,7 @@ def get_args():
                                    parents=[parent_parser])
     fixvcf_req = fixvcf.add_argument_group('required arguments')
     fixvcf_req.add_argument("vcf", help="vcf file to parse")
-
+    fixvcf_req.add_argument("--fai", help="index of corresponding fasta file", required=True)
     fixvcf_opt = fixvcf.add_argument_group('optional arguments')
     fixvcf_opt.add_argument("-o", "--output", help="vcf file to write to", default=None)
 

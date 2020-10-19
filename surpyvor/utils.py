@@ -236,7 +236,9 @@ def filter_vcf(vcf, output, minlength=0, truncate_svlen=float("inf"), suffix="")
             records_filtered, int(minlength)))
 
 
-def fix_vcf(vcf, output):
+def fix_vcf(vcf, output, fai):
+    chromsizes = {line.split()[0]: line.split()[1] for line in open(fai)}
+
     vcf_in = VCF(vcf)
     if not output:
         output = vcf.replace(".vcf", "_{}.vcf".format("fixed"))
@@ -246,12 +248,21 @@ def fix_vcf(vcf, output):
     handle, interm_output = tempfile.mkstemp(suffix=".vcf")
     vcf_out = Writer(interm_output, vcf_in)
     records_fixed = 0
+    records_truncated = 0
     for v in vcf_in:
         if v.start == -1:
             v.set_pos(0)
             records_fixed += 1
+        if chromsizes[v.INFO.get['CHR2']] < v.INFO.get['END']:
+            v.INFO['SVLEN'] = 1
+            v.INFO['END'] = v.start + 1
+            v.INFO['TRUNCATED'] = True
+            records_truncated += 1
         vcf_out.write_record(v)
     vcf_out.close()
     vcf_sort(interm_output, output)
     if records_fixed != 0:
         sys.stderr.write("Fixed {} records.\n".format(records_fixed))
+    if records_truncated != 0:
+        sys.stderr.write(
+            "Truncated {} records where END > chromosome size\n".format(records_truncated))

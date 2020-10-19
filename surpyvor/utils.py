@@ -237,7 +237,7 @@ def filter_vcf(vcf, output, minlength=0, truncate_svlen=float("inf"), suffix="")
 
 
 def fix_vcf(vcf, output, fai):
-    chromsizes = {line.split()[0]: line.split()[1] for line in open(fai)}
+    chromsizes = {line.split()[0]: int(line.split()[1]) for line in open(fai)}
 
     vcf_in = VCF(vcf)
     if not output:

@@ -243,12 +243,15 @@ def fix_vcf(vcf, output):
     vcf_in.add_info_to_header({'ID': 'TRUNCATED',
                                'Description': "SVLEN truncated",
                                'Type': 'Flag', 'Number': '0'})
-    vcf_out = Writer(output, vcf_in)
+    handle, interm_output = tempfile.mkstemp(suffix=".vcf")
+    vcf_out = Writer(interm_output, vcf_in)
     records_fixed = 0
     for v in vcf_in:
         if v.start == -1:
             v.set_pos(0)
             records_fixed += 1
         vcf_out.write_record(v)
+    vcf_out.close()
+    vcf_sort(interm_output, output)
     if records_fixed != 0:
         sys.stderr.write("Fixed {} records.\n".format(records_fixed))

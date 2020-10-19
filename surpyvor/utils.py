@@ -253,11 +253,14 @@ def fix_vcf(vcf, output, fai):
         if v.start == -1:
             v.set_pos(0)
             records_fixed += 1
-        if chromsizes[v.INFO.get['CHR2']] < v.INFO.get['END']:
-            v.INFO['SVLEN'] = 1
-            v.INFO['END'] = v.start + 1
-            v.INFO['TRUNCATED'] = True
-            records_truncated += 1
+        try:
+            if chromsizes[v.INFO.get('CHR2')] < v.INFO.get('END'):
+                v.INFO['SVLEN'] = 1
+                v.INFO['END'] = v.start + 1
+                v.INFO['TRUNCATED'] = True
+                records_truncated += 1
+        except KeyError:
+            pass
         vcf_out.write_record(v)
     vcf_out.close()
     vcf_sort(interm_output, output)

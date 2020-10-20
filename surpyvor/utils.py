@@ -249,7 +249,11 @@ def fix_vcf(vcf, output, fai):
     vcf_out = Writer(interm_output, vcf_in)
     records_fixed = 0
     records_truncated = 0
+    mito_variants = 0
     for v in vcf_in:
+        if v.CHROM == 'chrM':
+            mito_variants += 1
+            continue
         if v.start == -1:
             v.set_pos(0)
             records_fixed += 1
@@ -264,6 +268,8 @@ def fix_vcf(vcf, output, fai):
         vcf_out.write_record(v)
     vcf_out.close()
     vcf_sort(interm_output, output)
+    if mito_variants != 0:
+        sys.stderr.write("Removed {} records on chrM.\n".format(mito_variants))
     if records_fixed != 0:
         sys.stderr.write("Fixed {} records.\n".format(records_fixed))
     if records_truncated != 0:

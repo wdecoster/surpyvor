@@ -265,6 +265,9 @@ def fix_vcf(vcf, output, fai):
                 records_truncated += 1
         except KeyError:
             pass
+        if v.INFO.get('SVLEN') == 999999999:
+            v.INFO['SVLEN'] = 1
+            v.INFO['TRUNCATED'] = True
         vcf_out.write_record(v)
     vcf_out.close()
     vcf_sort(interm_output, output)

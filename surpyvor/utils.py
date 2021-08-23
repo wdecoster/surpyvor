@@ -245,11 +245,20 @@ def fix_vcf(vcf, output, fai):
     vcf_in.add_info_to_header({'ID': 'TRUNCATED',
                                'Description': "SVLEN truncated",
                                'Type': 'Flag', 'Number': '0'})
+    vcf_in.add_info_to_header({'ID': 'STRANDS2',
+                               'Description': "alt reads first +,alt reads first -,alt reads second +,alt reads second -.",
+                               'Type': 'Integer', 'Number': '4'})
+    vcf_in.add_info_to_header({'ID': 'Strandbias_pval',
+                               'Description': "P-value for fisher exact test for strand bias.",
+                               'Type': 'Float', 'Number': 'A'})
+    vcf_in.add_filter_to_header({'ID': 'STRANDBIAS',
+                                 'Description': "Strand is biased if Strandbias_pval< 0.01."})
     handle, interm_output = tempfile.mkstemp(suffix=".vcf")
     vcf_out = Writer(interm_output, vcf_in)
     records_fixed = 0
     records_truncated = 0
     mito_variants = 0
+    interchromosomal_bnds = 0
     for v in vcf_in:
         if v.CHROM == 'chrM':
             mito_variants += 1
@@ -257,6 +266,12 @@ def fix_vcf(vcf, output, fai):
         if v.start == -1:
             v.set_pos(0)
             records_fixed += 1
+        try:
+            if (v.INFO.get('SVTYPE') == 'BND') and (v.CHROM != v.INFO.get('CHR2')):
+                del v.INFO['END']
+                interchromosomal_bnds += 1
+        except KeyError:
+            pass
         try:
             if chromsizes[v.INFO.get('CHR2')] < v.INFO.get('END'):
                 v.INFO['SVLEN'] = 1
@@ -272,9 +287,10 @@ def fix_vcf(vcf, output, fai):
     vcf_out.close()
     vcf_sort(interm_output, output)
     if mito_variants != 0:
-        sys.stderr.write("Removed {} records on chrM.\n".format(mito_variants))
+        sys.stderr.write(f"Removed {mito_variants} records on chrM.\n")
     if records_fixed != 0:
-        sys.stderr.write("Fixed {} records.\n".format(records_fixed))
+        sys.stderr.write(f"Fixed {records_fixed} records.\n")
     if records_truncated != 0:
-        sys.stderr.write(
-            "Truncated {} records where END > chromosome size\n".format(records_truncated))
+        sys.stderr.write(f"Truncated {records_truncated} records where END > chromosome size\n")
+    if interchromosomal_bnds != 0:
+        sys.stderr.write(f"Dropped END for {interchromosomal_bnds} interchromosomal BNDs\n")

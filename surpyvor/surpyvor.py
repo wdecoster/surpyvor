@@ -31,7 +31,7 @@ def main():
                  distance=args.distance,
                  callers=len(args.variants),
                  require_type=True,
-                 require_strand=False,
+                 require_strand=args.strand,
                  estimate_distance=False,
                  minlength=args.minlength,
                  output=args.output,

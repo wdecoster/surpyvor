@@ -95,6 +95,10 @@ def get_args():
                               type=int,
                               default=50,
                               help="Minimum length of variants to consider")
+    highconf_opt.add_argument("-s", "--strand",
+                              action="store_true",
+                              default=False,
+                              help="Take strand into account")
     prf = subparsers.add_parser('prf',
                                 help="calculate precision, recall and F-measure",
                                 parents=[parent_parser])

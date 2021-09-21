@@ -2,3 +2,4 @@
 dist/
 surpyvor.egg-info/
 surpyvor/__pycache__/
+README.rst

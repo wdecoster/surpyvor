@@ -175,7 +175,7 @@ def get_svlengths(vcf):
     vcf = VCF(vcf)
     if len(vcf.samples) > 1:
         sys.stderr.write("\n\nWarning: this script does not support multiple samples in a vcf.\n")
-        sys.stderr.write("Plotting and counting only for {}.".format(vcf.samples[0]))
+        sys.stderr.write(f"Plotting and counting only for {vcf.samples[0]}.\n")
     for v in vcf:
         if is_variant(v.gt_types[0]) and not v.INFO.get('SVTYPE') == 'TRA':
             try:

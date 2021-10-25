@@ -236,7 +236,7 @@ def filter_vcf(vcf, output, minlength=0, truncate_svlen=float("inf"), suffix="")
             records_filtered, int(minlength)))
 
 
-def fix_vcf(vcf, output, fai):
+def fix_vcf(vcf, output, fai, jasmine=False):
     chromsizes = {line.split()[0]: int(line.split()[1]) for line in open(fai)}
 
     vcf_in = VCF(vcf)
@@ -253,6 +253,13 @@ def fix_vcf(vcf, output, fai):
                                'Type': 'Float', 'Number': 'A'})
     vcf_in.add_filter_to_header({'ID': 'STRANDBIAS',
                                  'Description': "Strand is biased if Strandbias_pval< 0.01."})
+    if jasmine:
+        vcf_in.add_info_to_header({'ID': 'STRANDS',
+                                   'Description': "foo",
+                                   'Type': 'String', 'Number': '1'})
+        vcf_in.add_info_to_header({'ID': 'AF',
+                                   'Description': "foo",
+                                   'Type': 'Float', 'Number': '1'})
     handle, interm_output = tempfile.mkstemp(suffix=".vcf")
     vcf_out = Writer(interm_output, vcf_in)
     records_fixed = 0

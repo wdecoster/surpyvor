@@ -51,7 +51,7 @@ def main():
     elif args.command == 'svlentruncate':
         svlentruncate(args)
     elif args.command == 'fixvcf':
-        utils.fix_vcf(args.vcf, args.output, args.fai)
+        utils.fix_vcf(args.vcf, args.output, args.fai, jasmine=args.jasmine)
     elif args.command == 'purge2d':
         purge2d(args)
 

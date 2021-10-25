@@ -280,7 +280,9 @@ def get_args():
     fixvcf_req.add_argument("vcf", help="vcf file to parse")
     fixvcf_req.add_argument("--fai", help="index of corresponding fasta file", required=True)
     fixvcf_opt = fixvcf.add_argument_group('optional arguments')
-    fixvcf_opt.add_argument("-o", "--output", help="vcf file to write to", default=None)
+    fixvcf_opt.add_argument("-o", "--output", help="vcf file to write to", default='stdout')
+    fixvcf_opt.add_argument("--jasmine",
+                            help="Fix problems related to using jasmine", action="store_true")
 
     purge2d = subparsers.add_parser('purge2d',
                                     help="Remove accidental 2D reads from a bam file",

@@ -169,15 +169,15 @@ def confusion_matrix(vcff, names):
     print(df)
 
 
-def get_svlengths(vcf):
+def get_svlengths(vcf, all=False):
     from collections import defaultdict
     len_dict = defaultdict(list)
     vcf = VCF(vcf)
-    if len(vcf.samples) > 1:
-        sys.stderr.write("\n\nWarning: this script does not support multiple samples in a vcf.\n")
-        sys.stderr.write(f"Plotting and counting only for {vcf.samples[0]}.\n")
+    if not all and len(vcf.samples) > 1:
+        sys.stderr.write(f"\n\nWarning: only using first sample: {vcf.samples[0]}.\n")
+        sys.stderr.write("Use --all to plot all variants.\n")
     for v in vcf:
-        if is_variant(v.gt_types[0]) and not v.INFO.get('SVTYPE') == 'TRA':
+        if all or is_variant(v.gt_types[0]) and not v.INFO.get('SVTYPE') == 'TRA':
             try:
                 if get_svlen(v) >= 50:
                     len_dict[get_svtype(v)].append(get_svlen(v))

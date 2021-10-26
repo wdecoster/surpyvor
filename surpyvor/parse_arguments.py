@@ -246,7 +246,9 @@ def get_args():
     lengthplot_opt.add_argument("-c", "--counts",
                                 help="output file to write counts to",
                                 default="SV-length.txt")
-
+    lengthplot_opt.add_argument("--all",
+                                help="Plot all variants and not just the first in the file",
+                                action="store_true")
     minlength = subparsers.add_parser('minlen',
                                       help="filter a SV vcf file by minimal variant length",
                                       parents=[parent_parser])

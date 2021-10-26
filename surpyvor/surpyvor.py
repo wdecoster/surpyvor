@@ -169,7 +169,7 @@ def purge2d(args):
 
 
 def lengthplot(args):
-    len_dict = utils.get_svlengths(args.vcf)
+    len_dict = utils.get_svlengths(args.vcf, all=args.all)
     with open(args.counts, 'w') as counts:
         counts.write("Number of nucleotides affected by SV:\n")
         for svtype, lengths in len_dict.items():

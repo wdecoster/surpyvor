@@ -102,3 +102,18 @@ def length_plot(dict_of_lengths, output):
                fontsize="small")
     plt.tight_layout()
     plt.savefig(output)
+
+
+def carrierplot(args):
+    from cyvcf2 import VCF
+    from surpyvor.utils import is_variant
+    import numpy as np
+    vcf = VCF(args.variants)
+    counts = np.array([sum([is_variant(call) for call in v.gt_types]) for v in vcf])
+    plt.hist(x=counts,
+             bins=[i for i in range(0, len(vcf.samples))],
+             histtype='bar')
+    plt.xlabel('Number of carriers')
+    plt.ylabel('Number of variants')
+    plt.tight_layout()
+    plt.savefig(args.plotout)

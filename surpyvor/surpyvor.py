@@ -54,6 +54,8 @@ def main():
         utils.fix_vcf(args.vcf, args.output, args.fai, jasmine=args.jasmine)
     elif args.command == 'purge2d':
         purge2d(args)
+    elif args.command == 'carrierplot':
+        plots.carrierplot(args)
 
 
 def sv_merge(samples, distance, callers, require_type, require_strand,

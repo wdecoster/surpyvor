@@ -297,6 +297,17 @@ def get_args():
                              help="sam/bam file to write filtered alignments to [stdout]",
                              default="-")
 
+    carrierplot = subparsers.add_parser('carrierplot',
+                                        help="show number of carriers per variant",
+                                        parents=[parent_parser])
+    carrierplot_req = carrierplot.add_argument_group('required arguments')
+    carrierplot_req.add_argument("variants", help="VCF to plot from")
+
+    carrierplot_opt = carrierplot.add_argument_group("optional arguments")
+    carrierplot_opt.add_argument("--plotout",
+                                 help="output file to write figure to",
+                                 default="SV-carriers.png")
+
     args = parser.parse_args()
     validate_args(parser, args)
     return args
@@ -321,9 +332,13 @@ def validate_args(parser, args):
             sys.exit("INPUT ERROR: "
                      "haplomerge can only be used on 2 or 3 vcf files!")
     if hasattr(args, 'variants'):
-        for f in args.variants:
-            if not path.isfile(f):
-                sys.exit("File not found: {}".format(f))
+        if isinstance(args.variants, list):
+            for f in args.variants:
+                if not path.isfile(f):
+                    sys.exit(f"File not found: {f}")
+        else:
+            if not path.isfile(args.variants):
+                sys.exit(f"File not found: {args.variants}")
     if hasattr(args, 'truth'):
         if not path.isfile(args.truth):
             sys.exit("File not found: {}".format(args.truth))

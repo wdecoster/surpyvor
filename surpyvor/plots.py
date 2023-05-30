@@ -48,6 +48,26 @@ def bar_chart(vcf, outname="stacked_bar.png"):
     plt.close()
 
 
+def num_variants_per_sample(vcf, outname="num_variants_per_sample.png"):
+    """
+    Make a histogram of the number of variants per sample
+    """
+    from cyvcf2 import VCF
+    import numpy as np
+
+    vcf = VCF(vcf)
+    counts = np.array([sum([call not in [0, 2] for call in v.gt_types]) for v in vcf])
+    ids = vcf.samples
+    # sort the counts and ids by counts
+    counts, ids = zip(*sorted(zip(counts, ids), reverse=True))
+    plt.scatter(x=ids, y=counts)
+    plt.xlabel("Samples")
+    plt.ylabel("Number of variants")
+    plt.tight_layout()
+    plt.savefig(outname)
+    plt.close()
+
+
 def upset_plot(upsets, outname="UpSetPlot.png"):
     from upsetplot import plot as upsetplot
 

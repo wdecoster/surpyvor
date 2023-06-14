@@ -305,6 +305,13 @@ def get_args():
         "--plotout", help="output file to write figure to", default="SV-counts.png"
     )
 
+    fixref = subparsers.add_parser(
+        "fixref", help="Fix reference allele in vcf file", parents=[parent_parser]
+    )
+    fixref_req = fixref.add_argument_group("required arguments")
+    fixref_req.add_argument("variants", help="VCF to fix")
+    fixref_req.add_argument("--fasta", help="fasta file", required=True)
+
     args = parser.parse_args()
     validate_args(parser, args)
     return args

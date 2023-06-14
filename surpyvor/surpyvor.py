@@ -61,9 +61,17 @@ def main():
     elif args.command == "purge2d":
         purge2d(args)
     elif args.command == "carrierplot":
-        plots.carrierplot(args)
+        from plots import carrierplot
+
+        carrierplot(args)
     elif args.command == "varcount":
-        plots.num_variants_per_sample(args.vcf, args.plotout)
+        from plots import num_variants_per_sample
+
+        num_variants_per_sample(args.variants, args.plotout)
+    elif args.command == "fixref":
+        from surpyvor.fixref import fixref
+
+        fixref(args.variants, args.fasta)
 
 
 def sv_merge(

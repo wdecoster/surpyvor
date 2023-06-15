@@ -1,5 +1,4 @@
-from surpyvor import plots, utils, parse_arguments
-import tempfile
+from surpyvor import utils, parse_arguments
 import sys
 
 
@@ -61,11 +60,11 @@ def main():
     elif args.command == "purge2d":
         purge2d(args)
     elif args.command == "carrierplot":
-        from plots import carrierplot
+        from surpyvor.plots import carrierplot
 
         carrierplot(args)
     elif args.command == "varcount":
-        from plots import num_variants_per_sample
+        from surpyvor.plots import num_variants_per_sample
 
         num_variants_per_sample(args.variants, args.plotout)
     elif args.command == "fixref":
@@ -98,6 +97,7 @@ def sv_merge(
     import subprocess
     import shlex
     import os
+    import tempfile
 
     fhf, fofn_f = tempfile.mkstemp()
     fhs, interm_out = tempfile.mkstemp(suffix=".vcf")
@@ -128,6 +128,8 @@ def sv_merge(
 
 
 def default_merge(args, variants):
+    import tempfile
+
     if args.keepmerged:
         vcf_out = args.keepmerged
     else:
@@ -161,25 +163,33 @@ def precision_recall_fmeasure(args):
     print(f"F-measure: {round(fmeasure, ndigits=4)}")
 
     if args.venn:
-        plots.venn_diagram((truth_set, test_set), labels=("Truth", "Test"))
+        from surpyvor.plots import venn_diagram
+
+        venn_diagram((truth_set, test_set), labels=("Truth", "Test"))
     if args.bar:
-        plots.bar_chart(vcf_out)
+        from surpyvor.plots import bar_chart
+
+        bar_chart(vcf_out)
     if args.matrix:
         utils.confusion_matrix(vcf_out, names=["truth", "test"])
 
 
 def upset(args):
+    from surpyvor.plots import upset_plot
+
     vcf_out = default_merge(args, args.variants)
     upsets = utils.make_sets(vcf=vcf_out, names=args.names or args.variants)
-    plots.upset_plot(upsets, outname=args.plotout)
+    upset_plot(upsets, outname=args.plotout)
 
 
 def venn(args):
+    from surpyvor.plots import venn_diagram
+
     vcf_out = default_merge(args, args.variants)
     sets = utils.get_variant_identifiers(
         vcf=vcf_out, ignore_chroms=[], num_samples=len(args.variants)
     )
-    plots.venn_diagram(
+    venn_diagram(
         sets,
         labels=args.names or args.variants,
         num_samples=len(args.variants),
@@ -202,12 +212,14 @@ def purge2d(args):
 
 
 def lengthplot(args):
+    from surpyvor.plots import length_plot
+
     len_dict = utils.get_svlengths(args.vcf, all=args.all)
     with open(args.counts, "w") as counts:
         counts.write("Number of nucleotides affected by SV:\n")
         for svtype, lengths in len_dict.items():
             counts.write("{}:\t{} variants\t{}bp\n".format(svtype, len(lengths), sum(lengths)))
-    plots.length_plot(dict_of_lengths=len_dict, output=args.plotout)
+    length_plot(dict_of_lengths=len_dict, output=args.plotout)
 
 
 def minlen(args):

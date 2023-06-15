@@ -304,6 +304,9 @@ def get_args():
     varcount_opt.add_argument(
         "--plotout", help="output file to write figure to", default="SV-counts.png"
     )
+    varcount_opt.add_argument(
+        "--countsout", help="output file to write counts to", default="SV-counts.txt"
+    )
 
     fixref = subparsers.add_parser(
         "fixref", help="Fix reference allele in vcf file", parents=[parent_parser]

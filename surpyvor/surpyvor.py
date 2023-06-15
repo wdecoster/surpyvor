@@ -66,7 +66,7 @@ def main():
     elif args.command == "varcount":
         from surpyvor.plots import num_variants_per_sample
 
-        num_variants_per_sample(args.variants, args.plotout)
+        num_variants_per_sample(args.variants, args.plotout, args.countsout)
     elif args.command == "fixref":
         from surpyvor.fixref import fixref
 

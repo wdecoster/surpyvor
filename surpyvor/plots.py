@@ -48,20 +48,27 @@ def bar_chart(vcf, outname="stacked_bar.png"):
     plt.close()
 
 
-def num_variants_per_sample(vcf, outname="num_variants_per_sample.png"):
+def num_variants_per_sample(vcf, outname="num_variants_per_sample.png", counts_out="counts.txt"):
     """
-    Make a histogram of the number of variants per sample
+    Make a scatter plot of the number of variants per sample
     """
     from cyvcf2 import VCF
     import numpy as np
 
     vcf = VCF(vcf)
-    counts = np.array([sum([call not in [0, 2] for call in v.gt_types]) for v in vcf])
+    calls = np.zeros(len(vcf.samples))
+    for v in vcf:
+        calls += np.array([int(g in [1, 3]) for g in v.gt_types])
     ids = vcf.samples
     # sort the counts and ids by counts
-    counts, ids = zip(*sorted(zip(counts, ids), reverse=True))
-    plt.scatter(x=ids, y=counts)
+    counts, ids = zip(*sorted(zip(calls.tolist(), ids), reverse=True))
+    with open(counts_out, "w") as out:
+        for i, c in zip(ids, counts):
+            out.write(f"{i}\t{c}\n")
+    plt.scatter(x=ids, y=counts, s=5)
     plt.xlabel("Samples")
+    if len(ids) > 20:
+        plt.xticks([])
     plt.ylabel("Number of variants")
     plt.tight_layout()
     plt.savefig(outname)

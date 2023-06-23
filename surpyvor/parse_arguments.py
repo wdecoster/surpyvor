@@ -16,6 +16,14 @@ def get_args():
         version="surpyvor: {}, SURVIVOR {}".format(__version__, get_survivor_version()),
         help="Print version and quit.",
     )
+
+    parser.add_argument(
+        "--snv",
+        help="vcf file has SNVs instead of SVs",
+        action="store_true",
+        default=False,
+    )
+
     parent_parser = ArgumentParser(add_help=False)
     parent_parser.add_argument(
         "--verbose", help="Print out more information while running.", action="store_true"

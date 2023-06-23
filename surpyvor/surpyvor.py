@@ -127,6 +127,20 @@ def sv_merge(
     os.close(fhs)
 
 
+def snv_merge(samples, output, verbose=False):
+    import subprocess
+    import shlex
+
+    inputfiles = " ".join(samples)
+    bcftools_cmd = f"bcftools merge {inputfiles} -o {output}"
+    if verbose:
+        print("\n\nExecuting:", file=sys.stderr)
+        print(bcftools_cmd, file=sys.stderr)
+    print("Executing bcftools...", end="", flush=True, file=sys.stderr)
+    subprocess.call(shlex.split(bcftools_cmd), stdout=subprocess.DEVNULL)
+    print("DONE", file=sys.stderr)
+
+
 def default_merge(args, variants):
     import tempfile
 
@@ -134,17 +148,20 @@ def default_merge(args, variants):
         vcf_out = args.keepmerged
     else:
         _, vcf_out = tempfile.mkstemp()
-    sv_merge(
-        samples=[utils.normalize_vcf(s) for s in variants],
-        distance=args.distance,
-        callers=1,
-        require_type=not args.ignore_type,
-        require_strand=False,
-        estimate_distance=False,
-        minlength=args.minlength,
-        output=vcf_out,
-        verbose=args.verbose,
-    )
+    if args.snv:
+        snv_merge(samples=variants, output=vcf_out, verbose=args.verbose)
+    else:
+        sv_merge(
+            samples=[utils.normalize_vcf(s) for s in variants],
+            distance=args.distance,
+            callers=1,
+            require_type=not args.ignore_type,
+            require_strand=False,
+            estimate_distance=False,
+            minlength=args.minlength,
+            output=vcf_out,
+            verbose=args.verbose,
+        )
     return vcf_out
 
 
